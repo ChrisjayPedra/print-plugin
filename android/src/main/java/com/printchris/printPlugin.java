@@ -1,5 +1,4 @@
 package com.printchris;
-
 import android.util.Log;
 
 public class printPlugin {
