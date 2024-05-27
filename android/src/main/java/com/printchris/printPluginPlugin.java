@@ -61,8 +61,13 @@ public class printPluginPlugin extends Plugin {
     @PluginMethod
     public void PrintAddCallBack(PluginCall call) {
         try{
-            AddCallback();
-            Log.d("AddCallback()", "PrintAddCallBack: try");
+            AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenedEvent(opened_callback, Pointer.NULL);
+            AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenFailedEvent(openfailed_callback, Pointer.NULL);
+            AutoReplyPrint.INSTANCE.CP_Port_AddOnPortClosedEvent(closed_callback, Pointer.NULL);
+            AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterStatusEvent(status_callback, Pointer.NULL);
+            AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterReceivedEvent(received_callback, Pointer.NULL);
+            AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterPrintedEvent(printed_callback, Pointer.NULL);
+            Log.d("TAG", "PrintAddCallBack: ");
             call.resolve();
         }catch (Exception e ){
             e.printStackTrace();
@@ -73,8 +78,12 @@ public class printPluginPlugin extends Plugin {
     @PluginMethod
     public void PrintRemoveCallback(PluginCall call) {
         try{
-            RemoveCallback();
-            Log.d("RemoveCallback", "PrintRemoveCallback: try");
+            AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenedEvent(opened_callback);
+            AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenFailedEvent(openfailed_callback);
+            AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortClosedEvent(closed_callback);
+            AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterStatusEvent(status_callback);
+            AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterReceivedEvent(received_callback);
+            AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterPrintedEvent(printed_callback);
             call.resolve();
         }catch (Exception e){
             e.printStackTrace();
@@ -118,8 +127,36 @@ public class printPluginPlugin extends Plugin {
             call.reject("failed OpenPort: catch"+e.getMessage());
         }
     }
+    @PluginMethod
+    public void EnumBle(PluginCall call) {
+        try {
+            IntByReference cancel = new IntByReference(0);
+            AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback callback = new AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback() {
+                @Override
+                public void CP_OnBluetoothDeviceDiscovered(String deviceName, final String deviceAddress, Pointer privateData) {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d("EnumBle", "Discovered device: " + deviceAddress);
+                            }
+                        });
+                    } else {
+                        Log.d("EnumBle", "Activity is null");
+                    }
+                }
+            };
 
-
+            Log.d("EnumBle", "EnumBle: try");
+            // Assuming you need to register the callback with some Bluetooth discovery process
+            AutoReplyPrint.INSTANCE.CP_Port_EnumBleDevice(20000, cancel, callback, null);
+            call.resolve();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("Error EnumBle", "EnumBle: catch " + e.getMessage());
+            call.reject("Failed EnumBle: " + e.getMessage());
+        }
+    }
 
     AutoReplyPrint.CP_OnPortOpenedEvent_Callback opened_callback = new AutoReplyPrint.CP_OnPortOpenedEvent_Callback() {
         @Override
@@ -138,6 +175,7 @@ public class printPluginPlugin extends Plugin {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.d("TAG", "run: ");
                     Toast.makeText(getContext(), "Open Failed", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -231,54 +269,24 @@ public class printPluginPlugin extends Plugin {
         }
     };
 
-    public void AddCallback() {
-        AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenedEvent(opened_callback, Pointer.NULL);
-        AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenFailedEvent(openfailed_callback, Pointer.NULL);
-        AutoReplyPrint.INSTANCE.CP_Port_AddOnPortClosedEvent(closed_callback, Pointer.NULL);
-        AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterStatusEvent(status_callback, Pointer.NULL);
-        AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterReceivedEvent(received_callback, Pointer.NULL);
-        AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterPrintedEvent(printed_callback, Pointer.NULL);
-        Log.d("addCallback", "AddCallback: ");
-    }
-    public void RemoveCallback() {
-        AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenedEvent(opened_callback);
-        AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenFailedEvent(openfailed_callback);
-        AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortClosedEvent(closed_callback);
-        AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterStatusEvent(status_callback);
-        AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterReceivedEvent(received_callback);
-        AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterPrintedEvent(printed_callback);
-        Log.d("removeCallBack", "RemoveCallback: ");
-    }
-    @PluginMethod
-    public void EnumBle(PluginCall call) {
-        try {
-            IntByReference cancel = new IntByReference(0);
-            AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback callback = new AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback() {
-                @Override
-                public void CP_OnBluetoothDeviceDiscovered(String deviceName, final String deviceAddress, Pointer privateData) {
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d("EnumBle", "Discovered device: " + deviceAddress);
-                            }
-                        });
-                    } else {
-                        Log.d("EnumBle", "Activity is null");
-                    }
-                }
-            };
-
-            Log.d("EnumBle", "EnumBle: try");
-            // Assuming you need to register the callback with some Bluetooth discovery process
-            AutoReplyPrint.INSTANCE.CP_Port_EnumBleDevice(20000, cancel, callback, null);
-            call.resolve();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("Error EnumBle", "EnumBle: catch " + e.getMessage());
-            call.reject("Failed EnumBle: " + e.getMessage());
-        }
-    }
+//    public void AddCallback() {
+//        AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenedEvent(opened_callback, Pointer.NULL);
+//        AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenFailedEvent(openfailed_callback, Pointer.NULL);
+//        AutoReplyPrint.INSTANCE.CP_Port_AddOnPortClosedEvent(closed_callback, Pointer.NULL);
+//        AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterStatusEvent(status_callback, Pointer.NULL);
+//        AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterReceivedEvent(received_callback, Pointer.NULL);
+//        AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterPrintedEvent(printed_callback, Pointer.NULL);
+//        Log.d("addCallback", "AddCallback: ");
+//    }
+//    public void RemoveCallback() {
+//        AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenedEvent(opened_callback);
+//        AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenFailedEvent(openfailed_callback);
+//        AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortClosedEvent(closed_callback);
+//        AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterStatusEvent(status_callback);
+//        AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterReceivedEvent(received_callback);
+//        AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterPrintedEvent(printed_callback);
+//        Log.d("removeCallBack", "RemoveCallback: ");
+//    }
 
     public void ClosePort() {
         if (h != Pointer.NULL) {
