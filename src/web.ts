@@ -3,24 +3,29 @@ import { WebPlugin } from '@capacitor/core';
 import type { printPluginPlugin } from './definitions';
 
 export class printPluginWeb extends WebPlugin implements printPluginPlugin {
-  EnumBle(): Promise<{ value: string; }> {
+  async EnumBle(): Promise<{ value: string }> {
     throw new Error('Method not implemented.');
   }
-  PrintOpenPort(options: { content: string; }): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      try {
-          console.log(options.content);
-          resolve();
-      } catch (error) {
-          reject(error);
-      }
-  }); 
+  async EnumBt(): Promise<{ value: string }> {
+    throw new Error('Method not implemented.');
   }
-  async PrintAddCallBack(): Promise<{ value: string }> {
-    return { value: 'PrintAddCallback' };
+  async EnumNet(): Promise<{ value: string }> {
+    throw new Error('Method not implemented.');
   }
-  async PrintRemoveCallBack(): Promise<{ value: string }> {
-    return { value: 'PrintRemoveCallBack' };
+  async EnumCom(): Promise<{ value: string }> {
+    throw new Error('Method not implemented.');
+  }
+  async EnumUsb(): Promise<{ value: string }> {
+    throw new Error('Method not implemented.');
+  }
+  async EnumWiFiP2P(): Promise<{ value: string }> {
+    throw new Error('Method not implemented.');
+  }
+  async TestFunction(): Promise<{ value: string }> {
+    throw new Error('Method not implemented.');
+  }
+  async AddCallback(): Promise<{ value: string }> {
+    throw new Error('Method not implemented.');
   }
   async enableServices(): Promise<{ value: string }> {
     console.log('Services has been enabled');
@@ -31,9 +36,5 @@ export class printPluginWeb extends WebPlugin implements printPluginPlugin {
     console.log('testPluginMethod');
     return { value: options.msg };
     // throw new Error('Method not implemented.');
-  }
-  async echo(options: { value: string }): Promise<{ value: string }> {
-    console.log('ECHO', options);
-    return options;
   }
 }

@@ -4,11 +4,15 @@ declare module "@capacitor/core"{
     }
 }
 export interface printPluginPlugin {
-  echo(options: { value: string }): Promise<{ value: string }>;
   testPluginMethod(options: { msg: string }): Promise<{ value: string }>;
   enableServices(): Promise<{ value: string }>;
-  PrintAddCallBack(): Promise<{ value: string }>;
-  PrintRemoveCallBack(): Promise<{ value: string }>;
-  PrintOpenPort(options:{content:string}):Promise<void>
+  AddCallback(): Promise<{ value: string }>;
   EnumBle(): Promise<{ value: string }>;
+  EnumBt(): Promise<{ value: string }>;
+  EnumNet(): Promise<{ value: string }>;
+  EnumCom(): Promise<{ value: string }>;
+  EnumUsb(): Promise<{ value: string }>;
+  EnumWiFiP2P(): Promise<{ value: string }>;
+  TestFunction(): Promise<{ value: string }>;
+  
 }
