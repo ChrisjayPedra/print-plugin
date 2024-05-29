@@ -3,6 +3,12 @@ import { WebPlugin } from '@capacitor/core';
 import type { printPluginPlugin } from './definitions';
 
 export class printPluginWeb extends WebPlugin implements printPluginPlugin {
+  Test_Pos_SampleTicket_58MM_2(): Promise<{ value: string; }> {
+    throw new Error('Method not implemented.');
+  }
+  async OpenPort(_options: {content: any}): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   async EnumBle(): Promise<{ value: string }> {
     throw new Error('Method not implemented.');
   }
@@ -21,7 +27,7 @@ export class printPluginWeb extends WebPlugin implements printPluginPlugin {
   async EnumWiFiP2P(): Promise<{ value: string }> {
     throw new Error('Method not implemented.');
   }
-  async TestFunction(): Promise<{ value: string }> {
+  async Test_Pos_SampleTicket_80MM_1(): Promise<{ value: string }> {
     throw new Error('Method not implemented.');
   }
   async AddCallback(): Promise<{ value: string }> {

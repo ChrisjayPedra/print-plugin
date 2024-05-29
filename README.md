@@ -22,7 +22,9 @@ npx cap sync
 * [`EnumCom()`](#enumcom)
 * [`EnumUsb()`](#enumusb)
 * [`EnumWiFiP2P()`](#enumwifip2p)
-* [`TestFunction()`](#testfunction)
+* [`Test_Pos_SampleTicket_80MM_1()`](#test_pos_sampleticket_80mm_1)
+* [`Test_Pos_SampleTicket_58MM_2()`](#test_pos_sampleticket_58mm_2)
+* [`OpenPort(...)`](#openport)
 
 </docgen-index>
 
@@ -132,13 +134,37 @@ EnumWiFiP2P() => Promise<{ value: string; }>
 --------------------
 
 
-### TestFunction()
+### Test_Pos_SampleTicket_80MM_1()
 
 ```typescript
-TestFunction() => Promise<{ value: string; }>
+Test_Pos_SampleTicket_80MM_1() => Promise<{ value: string; }>
 ```
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### Test_Pos_SampleTicket_58MM_2()
+
+```typescript
+Test_Pos_SampleTicket_58MM_2() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### OpenPort(...)
+
+```typescript
+OpenPort(options: { content: any; }) => Promise<void>
+```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ content: any; }</code> |
 
 --------------------
 

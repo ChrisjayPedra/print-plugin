@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -27,6 +28,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -37,6 +40,26 @@ public class printPlugin extends Plugin {
     private static final int REQUEST_ENABLE_BT = 2;
     private static final int MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE = 1001;
     private Pointer h = Pointer.NULL;
+    String strBT2Address = "";
+    String strBT4Address = "";
+    String strNETAddress = "";
+    String strUSBAddress = "";
+    String strCOMAddress = "";
+    String strWiFiP2PAddress = "";
+    //TODO
+    // private static final int nBaudTable[] = {1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 256000, 500000, 750000, 1125000, 1500000};
+    int nComBaudrate;
+    //TODO
+    // getcurrent index
+    // cbxListCOMFlowControl.addString("No Flow Control");
+    // cbxListCOMFlowControl.addString("Xon/Xoff");
+    // cbxListCOMFlowControl.addString("Rts/Cts");
+    // cbxListCOMFlowControl.addString("Dtr/Dsr");
+    // cbxListCOMFlowControl.setText("No Flow Control");
+    int nComFlowControl;
+    String strUSBPort = "";
+    String strCOMPort = "";
+    private JSONObject Content;
 
     @PluginMethod
     public void testPluginMethod(PluginCall call) {
@@ -95,7 +118,8 @@ public class printPlugin extends Plugin {
     }
 
     @PluginMethod
-    public void TestFunction(PluginCall call) {
+    public void Test_Pos_SampleTicket_80MM_1(PluginCall call) {
+        Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_80MM_1: ");
         try {
             int paperWidth = 384;
             int paperHeight = 800;
@@ -156,6 +180,15 @@ public class printPlugin extends Plugin {
             Log.d("TestFuntion", "TestFuntion: " + e.getMessage());
         }
     }
+    @PluginMethod
+    public void Test_Pos_SampleTicket_58MM_2(PluginCall call) {
+        Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_58MM_2: ");
+        Bitmap bitmap = TestUtils.getPrintBitmap(getContext(), 384, 400);
+        AutoReplyPrint.CP_Pos_PrintRasterImageFromData_Helper.PrintRasterImageFromBitmap(h, bitmap.getWidth(), bitmap.getHeight(), bitmap, AutoReplyPrint.CP_ImageBinarizationMethod_Thresholding, AutoReplyPrint.CP_ImageCompressionMethod_None);
+        {
+            Test_Pos_QueryPrintResult(h);
+        }
+    }
 
     @PluginMethod
     public void EnumBle(PluginCall call) {
@@ -169,7 +202,9 @@ public class printPlugin extends Plugin {
                                     new Runnable() {
                                         @Override
                                         public void run() {
-                                            Log.d("BT4", "run: BT2" + device_address);
+                                            Log.d("BT4", "run: BT4" + device_address);
+                                            strBT4Address = device_address;
+                                            Log.d("BT4", "run: BT4" + device_address);
                                         }
                                     }
                             );
@@ -198,6 +233,8 @@ public class printPlugin extends Plugin {
                                         @Override
                                         public void run() {
                                             Log.d("BT2", "run: BT2" + device_address);
+                                            strBT2Address = device_address;
+                                            Log.d("BT2", "run: BT2" + strBT2Address);
                                         }
                                     }
                             );
@@ -219,19 +256,13 @@ public class printPlugin extends Plugin {
             IntByReference cancel = new IntByReference(0);
             AutoReplyPrint.CP_OnNetPrinterDiscovered_Callback callback = new AutoReplyPrint.CP_OnNetPrinterDiscovered_Callback() {
                 @Override
-                public void CP_OnNetPrinterDiscovered(
-                        String local_ip,
-                        String disconvered_mac,
-                        final String disconvered_ip,
-                        String discovered_name,
-                        Pointer private_data
-                ) {
-                    getActivity()
-                            .runOnUiThread(
+                public void CP_OnNetPrinterDiscovered(String local_ip,String disconvered_mac,final String disconvered_ip,String discovered_name,Pointer private_data) {
+                    getActivity().runOnUiThread(
                                     new Runnable() {
                                         @Override
                                         public void run() {
                                             Log.d("cbxListNET", "cbxListNET: " + disconvered_ip);
+                                            strNETAddress = disconvered_ip;
                                         }
                                     }
                             );
@@ -254,6 +285,10 @@ public class printPlugin extends Plugin {
             if (devicePaths != null) {
                 for (int i = 0; i < devicePaths.length; ++i) {
                     String name = devicePaths[i];
+                    if (strCOMPort.trim().isEmpty()) {
+                        strCOMPort = name;
+                        Log.d("Device COM name", "EnumCom: " + strCOMPort);
+                    }
                     Log.d("Device name", "EnumCom: " + name);
                 }
             }
@@ -274,7 +309,10 @@ public class printPlugin extends Plugin {
             if (devicePaths != null) {
                 for (int i = 0; i < devicePaths.length; ++i) {
                     String name = devicePaths[i];
-                    Log.d("Device usb name", "EnumUsb: " + name);
+                    if (strUSBPort.trim().isEmpty()) {
+                        strUSBPort = name;
+                        Log.d("Device usb name", "EnumUsb: " + strUSBPort);
+                    }
                 }
             }
             Log.d("USB", "USB: try ");
@@ -283,8 +321,6 @@ public class printPlugin extends Plugin {
             Log.d("USB", "USB: catch " + e.getMessage());
             call.reject("error");
         }
-
-
     }
 
     @PluginMethod
@@ -293,18 +329,13 @@ public class printPlugin extends Plugin {
             IntByReference cancel = new IntByReference(0);
             AutoReplyPrint.CP_OnWiFiP2PDeviceDiscovered_Callback callback = new AutoReplyPrint.CP_OnWiFiP2PDeviceDiscovered_Callback() {
                 @Override
-                public void CP_OnWiFiP2PDeviceDiscovered(
-                        String device_name,
-                        final String device_address,
-                        String device_type,
-                        Pointer private_data
-                ) {
-                    getActivity()
-                            .runOnUiThread(
+                public void CP_OnWiFiP2PDeviceDiscovered(String device_name,final String device_address, String device_type, Pointer private_data) {
+                    getActivity().runOnUiThread(
                                     new Runnable() {
                                         @Override
                                         public void run() {
                                             Log.d("device name Wifi", "run: " + device_address);
+                                            strWiFiP2PAddress = device_address;
                                         }
                                     }
                             );
@@ -320,6 +351,46 @@ public class printPlugin extends Plugin {
 
     }
 
+    @PluginMethod
+    public void OpenPort(PluginCall call) {
+        try {
+            JSObject contentObject = call.getObject("content");
+            Log.d("Content", "OpenPort: "+contentObject);
+            String type = contentObject.getString("type");
+            int nBaudTable = contentObject.getInteger("nBaudTable");
+            int flowControlIndex = contentObject.getInteger("flowControlIndex", -1);
+            Log.d("Content", "OpenPort: "+type);
+            Log.d("Content", "OpenPort: "+contentObject);
+
+                    if (type.equals("BT2")) {
+                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenBtSpp(strBT2Address, 1);
+                        Log.d("strBT2Address", "run: "+strBT2Address);
+                    } else if (type.equals("BT4")) {
+                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenBtBle(strBT4Address, 1);
+                        Log.d("strBT4Address", "run: "+strBT4Address);
+                    } else if (type.equals("NET")) {
+                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenTcp(null, strNETAddress, (short) 9100, 5000, 1);
+                    } else if (type.equals("USB")) {
+                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenUsb(strUSBPort, 1);
+                    } else if (type.equals("COM")) {
+                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenCom(strCOMPort, nBaudTable, AutoReplyPrint.CP_ComDataBits_8, AutoReplyPrint.CP_ComParity_NoParity, AutoReplyPrint.CP_ComStopBits_One, flowControlIndex, 1);
+                    } else if (type.equals("WiFi")) {
+                        //if (AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_IsConnected())
+                        //    AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Disconnect();
+                        int host_address = AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Connect(strWiFiP2PAddress, 20000);
+                        if (host_address != 0) {
+                            String host_address_string = String.format("%d.%d.%d.%d", host_address & 0x000000ffl, (host_address & 0x0000ff00l) >> 8, (host_address & 0x00ff0000l) >> 16, (host_address & 0xff000000l) >> 24);
+                            h = AutoReplyPrint.INSTANCE.CP_Port_OpenTcp(null, host_address_string, (short) 9100, 5000, 1);
+                        }
+                    }
+
+            Log.d("Open port", "OpenPort: try ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("Error Open port", "OpenPort: catch Error" + e.getMessage());
+        }
+    }
+
     public void Test_Pos_QueryPrintResult(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_QueryPrintResult(h, 30000);
         if (!result) {
@@ -330,6 +401,7 @@ public class printPlugin extends Plugin {
             TestUtils.showMessageOnUiThread(getActivity(), "Print Success");
         }
     }
+
 
     AutoReplyPrint.CP_OnPortOpenedEvent_Callback opened_callback = new AutoReplyPrint.CP_OnPortOpenedEvent_Callback() {
         @Override
@@ -506,8 +578,10 @@ public class printPlugin extends Plugin {
         saveCall(call);
         pluginRequestPermissions(new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
         }, MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE);
     }
 

@@ -13,6 +13,8 @@ export interface printPluginPlugin {
   EnumCom(): Promise<{ value: string }>;
   EnumUsb(): Promise<{ value: string }>;
   EnumWiFiP2P(): Promise<{ value: string }>;
-  TestFunction(): Promise<{ value: string }>;
+  Test_Pos_SampleTicket_80MM_1(): Promise<{ value: string }>;
+  Test_Pos_SampleTicket_58MM_2(): Promise<{ value: string }>;
+  OpenPort(options: {content: any}) : Promise<void>
   
 }
