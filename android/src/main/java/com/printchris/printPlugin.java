@@ -291,6 +291,7 @@ public class printPlugin extends Plugin {
                 byte status[] = new byte[1];
                 if (AutoReplyPrint.INSTANCE.CP_Port_Read(h, status, 1, 2000) == 1) {
                     TestUtils.showMessageOnUiThread(getActivity(), String.format("Status 0x%02X", status[0] & 0xff));
+                    Log.d("Test_Port_Read", "Test_Port_Read:  try"+String.format("Status 0x%02X", status[0] & 0xff));
                 } else {
                     TestUtils.showMessageOnUiThread(getActivity(), "Read failed");
                     Test_Pos_QueryPrintResult(h);

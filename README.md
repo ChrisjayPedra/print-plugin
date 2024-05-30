@@ -25,6 +25,9 @@ npx cap sync
 * [`EnumWiFiP2P()`](#enumwifip2p)
 * [`Test_Pos_SampleTicket_80MM_1()`](#test_pos_sampleticket_80mm_1)
 * [`Test_Pos_SampleTicket_58MM_2()`](#test_pos_sampleticket_58mm_2)
+* [`Test_Pos_SampleTicket_58MM_1()`](#test_pos_sampleticket_58mm_1)
+* [`Test_Port_Read()`](#test_port_read)
+* [`Test_Pos_PrintSelfTestPage()`](#test_pos_printselftestpage)
 * [`OpenPort(...)`](#openport)
 * [`ClosePort()`](#closeport)
 
@@ -162,6 +165,39 @@ Test_Pos_SampleTicket_80MM_1() => Promise<{ value: string; }>
 
 ```typescript
 Test_Pos_SampleTicket_58MM_2() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### Test_Pos_SampleTicket_58MM_1()
+
+```typescript
+Test_Pos_SampleTicket_58MM_1() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### Test_Port_Read()
+
+```typescript
+Test_Port_Read() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### Test_Pos_PrintSelfTestPage()
+
+```typescript
+Test_Pos_PrintSelfTestPage() => Promise<{ value: string; }>
 ```
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
