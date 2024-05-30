@@ -30,6 +30,7 @@ import com.sun.jna.ptr.IntByReference;
 
 import org.json.JSONObject;
 
+import java.security.PublicKey;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -180,6 +181,7 @@ public class printPlugin extends Plugin {
             Log.d("TestFuntion", "TestFuntion: " + e.getMessage());
         }
     }
+
     @PluginMethod
     public void Test_Pos_SampleTicket_58MM_2(PluginCall call) {
         Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_58MM_2: ");
@@ -188,6 +190,141 @@ public class printPlugin extends Plugin {
         {
             Test_Pos_QueryPrintResult(h);
         }
+    }
+
+    @PluginMethod
+    public void  Test_Pos_SampleTicket_58MM_1(PluginCall call) {
+        try{
+            int paperWidth = 384;
+
+            AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
+
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "123xxstreet,xxxcity,xxxxstate\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "TEL 9999-99-9999  C#2\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_HCenter);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "yyyy-MM-dd HH:mm:ss");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "apples");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$10.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "grapes");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$20.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "bananas");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$30.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "lemons");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$40.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "oranges");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$100.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Before adding tax");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$200.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "tax 5.0%");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$10.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            String line = "";
+            for (int i = 0; i < paperWidth / 12; ++i)
+                line += " ";
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 2);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, line);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 0);
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 1, 0);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "total");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 2 * 7);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$190.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 0, 0);
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Customer's payment");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$200.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Change");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$10.00");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+
+            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, "12345678901");
+
+            AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
+
+            {
+                Test_Pos_QueryPrintResult(h);
+            }
+            Log.d("TestPosTicket58MM1", "Test_Pos_SampleTicket_58MM_1: try ");
+            call.resolve();
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.d("TestPosTicket58MM1", "Test_Pos_SampleTicket_58MM_1:  catch"+e.getMessage());
+            call.reject("Test_Pos_SampleTicket_58MM_1:  catch"+e.getMessage());
+        }
+
+    }
+//    TODO
+//    testprint
+    @PluginMethod
+    public void  Test_Port_Read(PluginCall call) {
+        try{
+            // send this cmd to query printer status
+            byte cmd[] = {0x10, 0x04, 0x01};
+            AutoReplyPrint.INSTANCE.CP_Port_SkipAvailable(h);
+            if (AutoReplyPrint.INSTANCE.CP_Port_Write(h, cmd, cmd.length, 1000) == cmd.length) {
+                byte status[] = new byte[1];
+                if (AutoReplyPrint.INSTANCE.CP_Port_Read(h, status, 1, 2000) == 1) {
+                    TestUtils.showMessageOnUiThread(getActivity(), String.format("Status 0x%02X", status[0] & 0xff));
+                } else {
+                    TestUtils.showMessageOnUiThread(getActivity(), "Read failed");
+                    Test_Pos_QueryPrintResult(h);
+                }
+            } else {
+                TestUtils.showMessageOnUiThread(getActivity(), "Write failed");
+            }
+            Log.d("Test_Port_Read", "Test_Port_Read:  try");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Test_Port_Read", "Test_Port_Read: Catch"+e.getMessage());
+            call.reject("Test_Port_Read: Catch"+e.getMessage());
+        }
+
+
+    }
+
+    @PluginMethod
+    public void Test_Pos_PrintSelfTestPage(PluginCall call) {
+        try{
+            boolean result = AutoReplyPrint.INSTANCE.CP_Pos_PrintSelfTestPage(h);
+            if (!result){
+                TestUtils.showMessageOnUiThread(getActivity(), "Write failed");
+                Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage: Write failed");
+            }
+         Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage");
+         call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage: catch"+e.getMessage());
+            call.reject("Test_Pos_PrintSelfTestPage: catch"+e.getMessage());
+        }
+
     }
 
     @PluginMethod
@@ -390,6 +527,24 @@ public class printPlugin extends Plugin {
             Log.d("Error Open port", "OpenPort: catch Error" + e.getMessage());
         }
     }
+    @PluginMethod
+    public void ClosePort(PluginCall call) {
+        try{
+            if (h != Pointer.NULL) {
+                AutoReplyPrint.INSTANCE.CP_Port_Close(h);
+                h = Pointer.NULL;
+            }
+            //if (AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_IsConnected())
+            //    AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Disconnect();
+            Log.d("ClosePort", "ClosePort: try");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("ClosePort", "ClosePort: "+e.getMessage());
+            call.reject("ClosePort error:"+e.getMessage());
+        }
+
+    }
 
     public void Test_Pos_QueryPrintResult(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_QueryPrintResult(h, 30000);
@@ -401,7 +556,6 @@ public class printPlugin extends Plugin {
             TestUtils.showMessageOnUiThread(getActivity(), "Print Success");
         }
     }
-
 
     AutoReplyPrint.CP_OnPortOpenedEvent_Callback opened_callback = new AutoReplyPrint.CP_OnPortOpenedEvent_Callback() {
         @Override
@@ -584,7 +738,6 @@ public class printPlugin extends Plugin {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
         }, MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE);
     }
-
 
     @Override
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {

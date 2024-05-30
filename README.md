@@ -16,6 +16,7 @@ npx cap sync
 * [`testPluginMethod(...)`](#testpluginmethod)
 * [`enableServices()`](#enableservices)
 * [`AddCallback()`](#addcallback)
+* [`RemoveCallback()`](#removecallback)
 * [`EnumBle()`](#enumble)
 * [`EnumBt()`](#enumbt)
 * [`EnumNet()`](#enumnet)
@@ -25,6 +26,7 @@ npx cap sync
 * [`Test_Pos_SampleTicket_80MM_1()`](#test_pos_sampleticket_80mm_1)
 * [`Test_Pos_SampleTicket_58MM_2()`](#test_pos_sampleticket_58mm_2)
 * [`OpenPort(...)`](#openport)
+* [`ClosePort()`](#closeport)
 
 </docgen-index>
 
@@ -61,6 +63,17 @@ enableServices() => Promise<{ value: string; }>
 
 ```typescript
 AddCallback() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### RemoveCallback()
+
+```typescript
+RemoveCallback() => Promise<{ value: string; }>
 ```
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
@@ -165,6 +178,17 @@ OpenPort(options: { content: any; }) => Promise<void>
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ content: any; }</code> |
+
+--------------------
+
+
+### ClosePort()
+
+```typescript
+ClosePort() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
 --------------------
 
