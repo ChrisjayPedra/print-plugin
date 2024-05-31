@@ -21,4 +21,5 @@ export interface printPluginPlugin {
   Test_Pos_PrintSelfTestPage(): Promise<{ value: string }>;
   OpenPort(options: {content: any}) : Promise<void>
   ClosePort(): Promise<{ value: string }>;
+  
 }

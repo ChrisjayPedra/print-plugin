@@ -5,7 +5,7 @@ print
 ## Install
 
 ```bash
-npm install print-plugin
+npm i print-plugin-ionic-cjp
 npx cap sync
 ```
 

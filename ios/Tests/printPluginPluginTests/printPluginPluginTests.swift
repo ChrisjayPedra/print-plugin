@@ -12,4 +12,5 @@ class printPluginTests: XCTestCase {
 
         XCTAssertEqual(value, result)
     }
+    
 }
