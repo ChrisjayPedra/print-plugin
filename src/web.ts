@@ -3,6 +3,7 @@ import { WebPlugin } from '@capacitor/core';
 import type { printPluginPlugin } from './definitions';
 
 export class printPluginWeb extends WebPlugin implements printPluginPlugin {
+ 
   async ClosePort(): Promise<{ value: string }> {
     throw new Error('Method not implemented.');
   }
@@ -40,6 +41,12 @@ export class printPluginWeb extends WebPlugin implements printPluginPlugin {
     throw new Error('Method not implemented.');
   }
   async Test_Port_Read(): Promise<{ value: string; }> {
+    throw new Error('Method not implemented.');
+  }
+  async Test_Pos_PrintBarcode(): Promise<{ value: string; }> {
+    throw new Error('Method not implemented.');
+  }
+  async Test_Pos_PrintQRCode(): Promise<{ value: string; }> {
     throw new Error('Method not implemented.');
   }
   async RemoveCallback(): Promise<{ value: string }> {

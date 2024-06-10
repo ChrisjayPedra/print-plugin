@@ -24,13 +24,16 @@ import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.LongByReference;
 
 import org.json.JSONObject;
 
 import java.security.PublicKey;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -61,6 +64,732 @@ public class printPlugin extends Plugin {
     String strUSBPort = "";
     String strCOMPort = "";
     private JSONObject Content;
+
+    @PluginMethod
+    public void Test_Pos_SampleTicket_80MM_1(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleTicket_80MM_1(h);
+            Log.d("try", "Test_Pos_SampleTicket_80MM_1: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleTicket_80MM_1: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SampleTicket_80MM_2(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleTicket_80MM_2(h);
+            Log.d("try", "Test_Pos_SampleTicket_80MM_2: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleTicket_80MM_2: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SampleTicket_58MM_2(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleTicket_58MM_2(h);
+            Log.d("try", "Test_Pos_SampleTicket_58MM_2: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleTicket_58MM_2: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SampleTicket_58MM_1(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleTicket_58MM_1(h);
+            Log.d("try", "Test_Pos_SampleTicket_58MM_1: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleTicket_58MM_1: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintSelfTestPage(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintSelfTestPage(h);
+            Log.d("try", "Test_Pos_PrintSelfTestPage: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintSelfTestPage: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintBarcode(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintBarcode(h);
+            Log.d("try", "Test_Pos_PrintBarcode: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintBarcode: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintQRCode(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintQRCode(h);
+            Log.d("try", "Test_Pos_PrintQRCode: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintQRCode: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Port_Read(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Port_Read(h);
+            Log.d("try", "Test_Port_Read: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Port_Read: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Port_Write(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Port_Write(h);
+            Log.d("try", "Test_Port_Write: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Port_Write: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_MultipleLanguages_CompressNone(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_MultipleLanguages_CompressNone(h);
+            Log.d("try", "Test_Pos_MultipleLanguages_CompressNone: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_MultipleLanguages_CompressNone: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_MultipleLanguages_CompressLevel1(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_MultipleLanguages_CompressLevel1(h);
+            Log.d("try", "Test_Pos_MultipleLanguages_CompressLevel1: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_MultipleLanguages_CompressLevel1: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_MultipleLanguages_CompressLevel2(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_MultipleLanguages_CompressLevel2(h);
+            Log.d("try", "Test_Pos_MultipleLanguages_CompressLevel2: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_MultipleLanguages_CompressLevel2: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SampleImage_1_CompressNone(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleImage_1_CompressNone(h);
+            Log.d("try", "Test_Pos_SampleImage_1_CompressNone: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleImage_1_CompressNone: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SampleImage_1_CompressLevel1(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleImage_1_CompressLevel1(h);
+            Log.d("try", "Test_Pos_SampleImage_1_CompressLevel1: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleImage_1_CompressLevel1: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SampleImage_1_CompressLevel2(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleImage_1_CompressLevel2(h);
+            Log.d("try", "Test_Pos_SampleImage_1_CompressLevel2: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleImage_1_CompressLevel2: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SampleImage_2_CompressLevel2(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SampleImage_2_CompressLevel2(h);
+            Log.d("try", "Test_Pos_SampleImage_2_CompressLevel2: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SampleImage_2_CompressLevel2: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Port_Available(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Port_Available(h);
+            Log.d("try", "Test_Port_Available: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Port_Available: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Port_SkipAvailable(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Port_SkipAvailable(h);
+            Log.d("try", "Test_Port_SkipAvailable: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Port_SkipAvailable: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Port_IsConnectionValid(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Port_IsConnectionValid(h);
+            Log.d("try", "Test_Port_IsConnectionValid: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Port_IsConnectionValid: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Printer_GetPrinterInfo(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Printer_GetPrinterInfo(h);
+            Log.d("try", "Test_Printer_GetPrinterInfo: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Printer_GetPrinterInfo: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Printer_ClearPrinterBuffer(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Printer_ClearPrinterBuffer(h);
+            Log.d("try", "Test_Printer_ClearPrinterBuffer: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Printer_ClearPrinterBuffer: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Printer_ClearPrinterError(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Printer_ClearPrinterError(h);
+            Log.d("try", "Test_Printer_ClearPrinterError: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Printer_ClearPrinterError: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Proto_QueryBatteryLevel(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Proto_QueryBatteryLevel(h);
+            Log.d("try", "Test_Proto_QueryBatteryLevel: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Proto_QueryBatteryLevel: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintQRCodeUseEpsonCmd(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintQRCodeUseEpsonCmd(h);
+            Log.d("try", "Test_Pos_PrintQRCodeUseEpsonCmd: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintQRCodeUseImageCmd(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintQRCodeUseImageCmd(h);
+            Log.d("try", "Test_Pos_PrintQRCodeUseImageCmd: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintQRCodeUseImageCmd: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintDoubleQRCode(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintDoubleQRCode(h);
+            Log.d("try", "Test_Pos_PrintDoubleQRCode: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintDoubleQRCode: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintPDF417BarcodeUseEpsonCmd(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintPDF417BarcodeUseEpsonCmd(h);
+            Log.d("try", "Test_Pos_PrintPDF417BarcodeUseEpsonCmd: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintPDF417BarcodeUseEpsonCmd: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintRasterImageFromBitmap(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintRasterImageFromBitmap(h);
+            Log.d("try", "Test_Pos_PrintRasterImageFromBitmap: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintRasterImageFromBitmap: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_KickOutDrawer(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_KickOutDrawer(h);
+            Log.d("try", "Test_Pos_KickOutDrawer: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_KickOutDrawer: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_Beep(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_Beep(h);
+            Log.d("try", "Test_Pos_Beep: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_Beep: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_FeedAndHalfCutPaper(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_FeedAndHalfCutPaper(h);
+            Log.d("try", "Test_Pos_FeedAndHalfCutPaper: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_FeedAndHalfCutPaper: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_FullCutPaper(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_FullCutPaper(h);
+            Log.d("try", "Test_Pos_FullCutPaper: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_FullCutPaper: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_HalfCutPaper(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_HalfCutPaper(h);
+            Log.d("try", "Test_Pos_HalfCutPaper: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_HalfCutPaper: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_Feed(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_Feed(h);
+            Log.d("try", "Test_Pos_Feed: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_Feed: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintText(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintText(h);
+            Log.d("try", "Test_Pos_PrintText: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintText: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintTextInUTF8(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintTextInUTF8(h);
+            Log.d("try", "Test_Pos_PrintTextInUTF8: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintTextInUTF8: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintTextInGBK(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintTextInGBK(h);
+            Log.d("try", "Test_Pos_PrintTextInGBK: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintTextInGBK: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintTextInBIG5(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintTextInBIG5(h);
+            Log.d("try", "Test_Pos_PrintTextInBIG5: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintTextInBIG5: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintTextInShiftJIS(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintTextInShiftJIS(h);
+            Log.d("try", "Test_Pos_PrintTextInShiftJIS: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintTextInShiftJIS: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintTextInEUCKR(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintTextInEUCKR(h);
+            Log.d("try", "Test_Pos_PrintTextInEUCKR: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintTextInEUCKR: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintHorizontalLine(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintHorizontalLine(h);
+            Log.d("try", "Test_Pos_PrintHorizontalLine: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintHorizontalLine: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintHorizontalLineSpecifyThickness(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintHorizontalLineSpecifyThickness(h);
+            Log.d("try", "Test_Pos_PrintHorizontalLineSpecifyThickness: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintHorizontalLineSpecifyThickness: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_PrintMultipleHorizontalLinesAtOneRow(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_PrintMultipleHorizontalLinesAtOneRow(h);
+            Log.d("try", "Test_Pos_PrintMultipleHorizontalLinesAtOneRow: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_PrintMultipleHorizontalLinesAtOneRow: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetMovementUnit(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetMovementUnit(h);
+            Log.d("try", "Test_Pos_SetMovementUnit: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetMovementUnit: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetPrintAreaLeftMargin(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetPrintAreaLeftMargin(h);
+            Log.d("try", "Test_Pos_SetPrintAreaLeftMargin: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetPrintAreaLeftMargin: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetPrintAreaWidth(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetPrintAreaWidth(h);
+            Log.d("try", "Test_Pos_SetPrintAreaWidth: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetPrintAreaWidth: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetPrintPosition(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetPrintPosition(h);
+            Log.d("try", "Test_Pos_SetPrintPosition: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetPrintPosition: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetAlignment(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetAlignment(h);
+            Log.d("try", "Test_Pos_SetAlignment: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetAlignment: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetTextScale(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetTextScale(h);
+            Log.d("try", "Test_Pos_SetTextScale: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetTextScale: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetAsciiTextFontType(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetAsciiTextFontType(h);
+            Log.d("try", "Test_Pos_SetAsciiTextFontType: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetAsciiTextFontType: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+    @PluginMethod
+    public void Test_Pos_SetTextBold(PluginCall call){
+        try{
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Pos_SetTextBold(h);
+            Log.d("try", "Test_Pos_SetTextBold: ");
+            call.resolve();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("Catch", "Test_Pos_SetTextBold: "+e.getMessage());
+            call.reject(e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     @PluginMethod
     public void testPluginMethod(PluginCall call) {
@@ -116,216 +845,6 @@ public class printPlugin extends Plugin {
             Log.d("Catch", "RemoveCallBack: e" + e.getMessage());
             call.reject(e.getMessage());
         }
-    }
-
-    @PluginMethod
-    public void Test_Pos_SampleTicket_80MM_1(PluginCall call) {
-        Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_80MM_1: ");
-        try {
-            int paperWidth = 384;
-            int paperHeight = 800;
-
-            AutoReplyPrint.INSTANCE.CP_Page_SelectPageModeEx(h, 200, 200, 0, 0, paperWidth, paperHeight);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
-
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 1, 1);
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(
-                    h,
-                    AutoReplyPrint.CP_Page_DrawAlignment_HCenter,
-                    10,
-                    new WString("中国福利彩票")
-            );
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 0, 0);
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(h, 0, 60, new WString("销售期2015033"));
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(h, AutoReplyPrint.CP_Page_DrawAlignment_Right, 60, new WString("兑奖期2015033"));
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(h, 0, 90, new WString("站号230902001"));
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(h, AutoReplyPrint.CP_Page_DrawAlignment_Right, 90, new WString("7639-A"));
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(h, 0, 120, new WString("注数5"));
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(h, AutoReplyPrint.CP_Page_DrawAlignment_Right, 120, new WString("金额10.00"));
-
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextLineHeight(h, 60);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 0, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 2);
-            AutoReplyPrint.INSTANCE.CP_Page_DrawTextInUTF8(
-                    h,
-                    0,
-                    160,
-                    new WString(
-                            " A: 02  07  10  17  20  21  25\r\n A: 02  07  10  17  20  21  25\r\n A: 02  07  10  17  20  21  25\r\n A: 02  07  10  17  20  21  25\r\n A: 02  07  10  17  20  21  25\r\n"
-                    )
-            );
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 0, 0);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 0);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextLineHeight(h, 30);
-
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
-            AutoReplyPrint.INSTANCE.CP_Page_DrawBarcode(h, 0, 460, AutoReplyPrint.CP_Pos_BarcodeType_CODE128, "1234567890");
-            AutoReplyPrint.INSTANCE.CP_Page_DrawQRCode(h, 284, 460, 0, AutoReplyPrint.CP_QRCodeECC_L, "1234567890");
-
-            AutoReplyPrint.INSTANCE.CP_Page_PrintPage(h);
-            AutoReplyPrint.INSTANCE.CP_Page_ExitPageMode(h);
-
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedAndHalfCutPaper(h);
-            AutoReplyPrint.INSTANCE.CP_Pos_KickOutDrawer(h, 0, 100, 100);
-            AutoReplyPrint.INSTANCE.CP_Pos_KickOutDrawer(h, 1, 100, 100);
-            AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
-
-            {
-                Test_Pos_QueryPrintResult(h);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("TestFuntion", "TestFuntion: " + e.getMessage());
-        }
-    }
-
-    @PluginMethod
-    public void Test_Pos_SampleTicket_58MM_2(PluginCall call) {
-        Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_58MM_2: ");
-        Bitmap bitmap = TestUtils.getPrintBitmap(getContext(), 384, 400);
-        AutoReplyPrint.CP_Pos_PrintRasterImageFromData_Helper.PrintRasterImageFromBitmap(h, bitmap.getWidth(), bitmap.getHeight(), bitmap, AutoReplyPrint.CP_ImageBinarizationMethod_Thresholding, AutoReplyPrint.CP_ImageCompressionMethod_None);
-        {
-            Test_Pos_QueryPrintResult(h);
-        }
-    }
-
-    @PluginMethod
-    public void  Test_Pos_SampleTicket_58MM_1(PluginCall call) {
-        try{
-            int paperWidth = 384;
-
-            AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
-
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "123xxstreet,xxxcity,xxxxstate\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "TEL 9999-99-9999  C#2\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_HCenter);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "yyyy-MM-dd HH:mm:ss");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "apples");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$10.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "grapes");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$20.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "bananas");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$30.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "lemons");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$40.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "oranges");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$100.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Before adding tax");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$200.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "tax 5.0%");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$10.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            String line = "";
-            for (int i = 0; i < paperWidth / 12; ++i)
-                line += " ";
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 2);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, line);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 0);
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 1, 0);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "total");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 2 * 7);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$190.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 0, 0);
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Customer's payment");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$200.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Change");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$10.00");
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, "12345678901");
-
-            AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
-
-            {
-                Test_Pos_QueryPrintResult(h);
-            }
-            Log.d("TestPosTicket58MM1", "Test_Pos_SampleTicket_58MM_1: try ");
-            call.resolve();
-        }catch(Exception e){
-            e.printStackTrace();
-            Log.d("TestPosTicket58MM1", "Test_Pos_SampleTicket_58MM_1:  catch"+e.getMessage());
-            call.reject("Test_Pos_SampleTicket_58MM_1:  catch"+e.getMessage());
-        }
-
-    }
-//    TODO
-//    testprint
-    @PluginMethod
-    public void  Test_Port_Read(PluginCall call) {
-        try{
-            // send this cmd to query printer status
-            byte cmd[] = {0x10, 0x04, 0x01};
-            AutoReplyPrint.INSTANCE.CP_Port_SkipAvailable(h);
-            if (AutoReplyPrint.INSTANCE.CP_Port_Write(h, cmd, cmd.length, 1000) == cmd.length) {
-                byte status[] = new byte[1];
-                if (AutoReplyPrint.INSTANCE.CP_Port_Read(h, status, 1, 2000) == 1) {
-                    TestUtils.showMessageOnUiThread(getActivity(), String.format("Status 0x%02X", status[0] & 0xff));
-                    Log.d("Test_Port_Read", "Test_Port_Read:  try"+String.format("Status 0x%02X", status[0] & 0xff));
-                } else {
-                    TestUtils.showMessageOnUiThread(getActivity(), "Read failed");
-                    Test_Pos_QueryPrintResult(h);
-                }
-            } else {
-                TestUtils.showMessageOnUiThread(getActivity(), "Write failed");
-            }
-            Log.d("Test_Port_Read", "Test_Port_Read:  try");
-            call.resolve();
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.d("Test_Port_Read", "Test_Port_Read: Catch"+e.getMessage());
-            call.reject("Test_Port_Read: Catch"+e.getMessage());
-        }
-
-
-    }
-
-    @PluginMethod
-    public void Test_Pos_PrintSelfTestPage(PluginCall call) {
-        try{
-            boolean result = AutoReplyPrint.INSTANCE.CP_Pos_PrintSelfTestPage(h);
-            if (!result){
-                TestUtils.showMessageOnUiThread(getActivity(), "Write failed");
-                Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage: Write failed");
-            }
-         Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage");
-         call.resolve();
-        }catch (Exception e){
-            e.printStackTrace();
-            Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage: catch"+e.getMessage());
-            call.reject("Test_Pos_PrintSelfTestPage: catch"+e.getMessage());
-        }
-
     }
 
     @PluginMethod

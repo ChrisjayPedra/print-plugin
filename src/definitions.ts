@@ -21,5 +21,7 @@ export interface printPluginPlugin {
   Test_Pos_PrintSelfTestPage(): Promise<{ value: string }>;
   OpenPort(options: {content: any}) : Promise<void>
   ClosePort(): Promise<{ value: string }>;
-  
+  Test_Pos_PrintBarcode(): Promise<{ value: string }>;
+  Test_Pos_PrintQRCode(): Promise<{ value: string }>;
+ 
 }

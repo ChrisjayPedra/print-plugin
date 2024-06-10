@@ -30,6 +30,8 @@ npx cap sync
 * [`Test_Pos_PrintSelfTestPage()`](#test_pos_printselftestpage)
 * [`OpenPort(...)`](#openport)
 * [`ClosePort()`](#closeport)
+* [`Test_Pos_PrintBarcode()`](#test_pos_printbarcode)
+* [`Test_Pos_PrintQRCode()`](#test_pos_printqrcode)
 
 </docgen-index>
 
@@ -222,6 +224,28 @@ OpenPort(options: { content: any; }) => Promise<void>
 
 ```typescript
 ClosePort() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### Test_Pos_PrintBarcode()
+
+```typescript
+Test_Pos_PrintBarcode() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### Test_Pos_PrintQRCode()
+
+```typescript
+Test_Pos_PrintQRCode() => Promise<{ value: string; }>
 ```
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>

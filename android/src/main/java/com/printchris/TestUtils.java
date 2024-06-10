@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.widget.Toast;
@@ -42,6 +43,17 @@ class TestUtils {
             e.printStackTrace();
         }
         return image;
+    }
+
+    public static Bitmap scaleImageToWidth(Bitmap bitmap, int w) {
+        int bitmapWidth = bitmap.getWidth();
+        int bitmapHeight = bitmap.getHeight();
+        // 缩放图片的尺寸
+        float scaleWidth = (float) w / bitmapWidth;
+        float scaleHeight = scaleWidth;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, false);
     }
 
     public static void showMessageOnUiThread(final Activity activity, final String msg) {
@@ -118,4 +130,35 @@ class TestUtils {
         canvas.save();
         return bitmap;
     }
+
+    public static Bitmap getMultipleLanguagesSampleBitmap(Context context, int width) {
+        int height = 500;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(Color.WHITE);
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setTextSize(24);
+
+        String[] strs = {
+                "你好，欢迎使用。你好，欢迎使用。你好，欢迎使用。你好，欢迎使用。你好，欢迎使用。", //中文
+                "こんにちは、ご利用ください。こんにちは、ご利用ください。こんにちは、ご利用ください。こんにちは、ご利用ください。こんにちは、ご利用ください。",//日语
+                "안녕하세요.안녕하세요.안녕하세요.안녕하세요.안녕하세요.",//韩语
+                "Hello, welcome. Hello, welcome. Hello, welcome. Hello, welcome. Hello, welcome.", //英文
+                "Hallo, willkommen.Hallo, willkommen.Hallo, willkommen.Hallo, willkommen.Hallo, willkommen.",//德语
+                "Bonjour, bienvenue.Bonjour, bienvenue.Bonjour, bienvenue.Bonjour, bienvenue.Bonjour, bienvenue.",//法语
+                "Здравствуйте, добро пожаловать.  Здравствуйте, добро пожаловать.  Здравствуйте, добро пожаловать.  Здравствуйте, добро пожаловать.  Здравствуйте, добро пожаловать. ",//俄语
+                "Olá, bem-vindo.Olá, bem-vindo.Olá, bem-vindo.Olá, bem-vindo.Olá, bem-vindo.",//葡萄牙语
+                "Hola, bienvenido.Hola, bienvenido.Hola, bienvenido.Hola, bienvenido.Hola, bienvenido.",//西班牙语
+                "Привет, привет.Привет, привет.Привет, привет.Привет, привет.Привет, привет.",//乌克兰语
+                " مرحبا ، مرحبا بكم في استخدام .  مرحبا ، مرحبا بكم في استخدام .  مرحبا ، مرحبا بكم في استخدام .  مرحبا ، مرحبا بكم في استخدام .  مرحبا ، مرحبا بكم في استخدام . ",//阿拉伯语
+                "Witam, witam.Witam, witam.Witam, witam.Witam, witam.Witam, witam.",//波兰语
+        };
+        for (int i = 0; i < strs.length; ++i) {
+            canvas.drawText(strs[i], 0, 30 + i * 30, paint);
+        }
+
+        return bitmap;
+    }
+
 }
