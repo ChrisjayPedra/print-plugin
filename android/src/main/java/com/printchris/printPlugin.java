@@ -75,7 +75,9 @@ public class printPlugin extends Plugin {
             call.resolve();
         }catch (Exception e){
             e.printStackTrace();
+
             Log.d("Catch", "Test_Pos_SampleTicket_80MM_1: "+e.getMessage());
+
             call.reject(e.getMessage());
         }
     }
@@ -1118,6 +1120,7 @@ public class printPlugin extends Plugin {
                                     //TODO close callback
                                     //                    ClosePort();
                                     Log.d("closed_callback", "closed_callback");
+                                    Toast.makeText(getContext(),"closed_callback", Toast.LENGTH_SHORT).show();
                                 }
                             }
                     );
@@ -1149,22 +1152,34 @@ public class printPlugin extends Plugin {
                                     if (status.ERROR_OCCURED()) {
                                         if (status.ERROR_CUTTER())
                                             error_status_string += "[ERROR_CUTTER]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_CUTTER]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_FLASH())
                                             error_status_string += "[ERROR_FLASH]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_FLASH]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_NOPAPER())
                                             error_status_string += "[ERROR_NOPAPER]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_NOPAPER]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_VOLTAGE())
                                             error_status_string += "[ERROR_VOLTAGE]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_VOLTAGE]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_MARKER())
                                             error_status_string += "[ERROR_MARKER]";
+                                             Toast.makeText(getContext(),error_status_string += "[ERROR_MARKER]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_ENGINE())
                                             error_status_string += "[ERROR_MOVEMENT]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_MOVEMENT]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_OVERHEAT())
                                             error_status_string += "[ERROR_OVERHEAT]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_MOVEMENT]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_COVERUP())
                                             error_status_string += "[ERROR_COVERUP]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_MOTOR())
-                                            error_status_string += "[ERROR_MOTOR]";
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
+
+                                        error_status_string += "[ERROR_MOTOR]";
+                                        Toast.makeText(getContext(),error_status_string += "[ERROR_MOTOR]", Toast.LENGTH_SHORT).show();
+
                                     }
                                     String info_status_string = String.format(" Printer Info Status: 0x%04X", printer_info_status & 0xffff);
                                     if (status.INFO_LABELMODE())
@@ -1215,7 +1230,7 @@ public class printPlugin extends Plugin {
         }
     };
 
-    @Override
+
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
@@ -1223,6 +1238,8 @@ public class printPlugin extends Plugin {
                 if (hasAllPermissions()) {
                 } else {
                     Log.d("onPermissionGranted", "onRequestPermissionsResult: ");
+                    Toast.makeText(getContext(),"onRequestPermissionsResult", Toast.LENGTH_SHORT).show();
+
                 }
                 Log.d("finish", "onRequestPermissionsResult: ");
                 break;
@@ -1259,7 +1276,7 @@ public class printPlugin extends Plugin {
         }, MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE);
     }
 
-    @Override
+
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -1270,6 +1287,7 @@ public class printPlugin extends Plugin {
 
         for (int result : grantResults) {
             if (result == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_SHORT).show();
                 savedCall.reject("Permission denied");
                 return;
             }
@@ -1292,10 +1310,12 @@ public class printPlugin extends Plugin {
                         MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE);
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 bridge.getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Toast.makeText(getContext(), "enableBluetooth: true", Toast.LENGTH_SHORT).show();
                 Log.d("Bluetooth", "enableBluetooth: true");
             } else {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 bridge.getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                Toast.makeText(getContext(), "Already granted", Toast.LENGTH_SHORT).show();
                 Log.d("Bluetooth", "enableBluetooth: true");
                 // Permissions already granted, start Bluetooth scanning
                 Log.d("Bluetooth", "Already granted");
@@ -1311,6 +1331,7 @@ public class printPlugin extends Plugin {
         if (null != wifiManager) {
             if (!wifiManager.isWifiEnabled()) {
                 if (!wifiManager.setWifiEnabled(true)) {
+                    Toast.makeText(getContext(), "enableWiFi: off", Toast.LENGTH_SHORT).show();
                     Log.d("WIFI", "enableWiFi: off");
                 }
             }
@@ -1323,6 +1344,7 @@ public class printPlugin extends Plugin {
             boolean gpsLocation = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean networkLocation = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (!gpsLocation && !networkLocation) {
+                Toast.makeText(getContext(), "Please enable location else will not search ble printer", Toast.LENGTH_SHORT).show();
                 Log.d("Failed", "Please enable location else will not search ble printer");
             }
         }
