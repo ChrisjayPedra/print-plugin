@@ -1050,7 +1050,6 @@ public class function {
     }
 
 
-
     public void Test_Pos_QueryPrintResult(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_QueryPrintResult(h, 30000);
         if (!result) {
@@ -1061,4 +1060,6 @@ public class function {
             TestUtils.showMessageOnUiThread(activity, "Print Success");
         }
     }
+
+
 }

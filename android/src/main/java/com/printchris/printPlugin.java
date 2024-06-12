@@ -2,16 +2,23 @@ package com.printchris;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Presentation;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.hardware.display.DisplayManager;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -64,6 +71,67 @@ public class printPlugin extends Plugin {
     String strUSBPort = "";
     String strCOMPort = "";
     private JSONObject Content;
+
+    private DisplayManager mDisplayManager;
+    private Display[] displays;
+
+    @Override
+    public void load() {
+        super.load();
+        initDisplays();
+    }
+
+    private void initDisplays() {
+        Context context = getContext();
+        if (context != null) {
+            mDisplayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+            if (mDisplayManager != null) {
+                displays = mDisplayManager.getDisplays();
+            } else {
+                Toast.makeText(context, "DisplayManager is null", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(context, "Context is null", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @PluginMethod
+    public void ShowContentOnSecondaryScreen(PluginCall call) {
+        if (displays != null && displays.length > 1) { // Ensure there's more than one display
+            Context context = getContext();
+            if (context != null) {
+                DifferentDisplay mPresentation = new DifferentDisplay(context, displays[1]);
+                mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+                mPresentation.show();
+                Toast.makeText(context, "Secondary display available", Toast.LENGTH_SHORT).show();
+                call.resolve();
+            } else {
+                call.reject("Context is null");
+            }
+        } else {
+            call.reject("No secondary display available");
+            Context context = getContext();
+            if (context != null) {
+                Toast.makeText(context, "No secondary display available", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class DifferentDisplay extends Presentation {
+        public DifferentDisplay(Context outerContext, Display display) {
+            super(outerContext, display);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            // Inflate your desired content view here
+            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.differentdisplay_basket, null);
+            setContentView(view);
+        }
+    }
+
 
     @PluginMethod
     public void Test_Pos_SampleTicket_80MM_1(PluginCall call){

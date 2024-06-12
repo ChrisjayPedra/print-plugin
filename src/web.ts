@@ -4,6 +4,10 @@ import type { printPluginPlugin } from './definitions';
 
 export class printPluginWeb extends WebPlugin implements printPluginPlugin {
  
+ 
+  async ShowContentOnSecondaryScreen(): Promise<{ value: string; }> {
+    throw new Error('Method not implemented.');
+  }
   async ClosePort(): Promise<{ value: string }> {
     throw new Error('Method not implemented.');
   }

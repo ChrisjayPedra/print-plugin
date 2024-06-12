@@ -32,6 +32,7 @@ npx cap sync
 * [`ClosePort()`](#closeport)
 * [`Test_Pos_PrintBarcode()`](#test_pos_printbarcode)
 * [`Test_Pos_PrintQRCode()`](#test_pos_printqrcode)
+* [`ShowContentOnSecondaryScreen()`](#showcontentonsecondaryscreen)
 
 </docgen-index>
 
@@ -246,6 +247,17 @@ Test_Pos_PrintBarcode() => Promise<{ value: string; }>
 
 ```typescript
 Test_Pos_PrintQRCode() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### ShowContentOnSecondaryScreen()
+
+```typescript
+ShowContentOnSecondaryScreen() => Promise<{ value: string; }>
 ```
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>

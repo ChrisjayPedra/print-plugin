@@ -23,5 +23,6 @@ export interface printPluginPlugin {
   ClosePort(): Promise<{ value: string }>;
   Test_Pos_PrintBarcode(): Promise<{ value: string }>;
   Test_Pos_PrintQRCode(): Promise<{ value: string }>;
+  ShowContentOnSecondaryScreen(): Promise<{ value: string }>;
   
 }
