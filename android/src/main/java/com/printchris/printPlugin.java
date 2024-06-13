@@ -1218,29 +1218,37 @@ public class printPlugin extends Plugin {
                                     );
                                     String error_status_string = String.format(" Printer Error Status: 0x%04X", printer_error_status & 0xffff);
                                     if (status.ERROR_OCCURED()) {
-                                        if (status.ERROR_CUTTER())
+                                        if (status.ERROR_CUTTER()) {
                                             error_status_string += "[ERROR_CUTTER]";
-                                            Toast.makeText(getContext(),error_status_string += "[ERROR_CUTTER]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_FLASH())
+                                            Toast.makeText(getContext(), error_status_string += "[ERROR_CUTTER]", Toast.LENGTH_SHORT).show();
+                                        }
+                                          if (status.ERROR_FLASH())
                                             error_status_string += "[ERROR_FLASH]";
+
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_FLASH]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_NOPAPER())
                                             error_status_string += "[ERROR_NOPAPER]";
+
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_NOPAPER]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_VOLTAGE())
                                             error_status_string += "[ERROR_VOLTAGE]";
+
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_VOLTAGE]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_MARKER())
                                             error_status_string += "[ERROR_MARKER]";
+
                                              Toast.makeText(getContext(),error_status_string += "[ERROR_MARKER]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_ENGINE())
                                             error_status_string += "[ERROR_MOVEMENT]";
+
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_MOVEMENT]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_OVERHEAT())
                                             error_status_string += "[ERROR_OVERHEAT]";
+
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_MOVEMENT]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_COVERUP())
                                             error_status_string += "[ERROR_COVERUP]";
+
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
                                         if (status.ERROR_MOTOR())
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();

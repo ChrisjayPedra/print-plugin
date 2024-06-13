@@ -1,6 +1,6 @@
 {
   "name": "print-plugin-ionic-cjp",
-  "version": "0.3.30",
+  "version": "0.3.42",
   "description": "print",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",

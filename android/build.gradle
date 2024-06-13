@@ -45,19 +45,20 @@ android {
 repositories {
     google()
     mavenCentral()
+
+
 }
 
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
     implementation project(':capacitor-android')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     testImplementation "junit:junit:$junitVersion"
-    implementation files('aar/autoreplyprint.aar')
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.fragment:fragment:1.4.0'
-
-//    implementation files('libs/autoreplyprint.aar')
+    implementation files('src/main/autoreplyprint.aar')
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+
 }
