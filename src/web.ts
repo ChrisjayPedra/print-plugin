@@ -1,11 +1,10 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { printPluginPlugin } from './definitions';
+import type { Payload, printPluginPlugin } from './definitions';
 
 export class printPluginWeb extends WebPlugin implements printPluginPlugin {
- 
- 
-  async ShowContentOnSecondaryScreen(): Promise<{ value: string; }> {
+
+  async DisplayScreen(): Promise<{ value: string; }> {
     throw new Error('Method not implemented.');
   }
   async ClosePort(): Promise<{ value: string }> {
@@ -69,4 +68,11 @@ export class printPluginWeb extends WebPlugin implements printPluginPlugin {
     return { value: options.msg };
     // throw new Error('Method not implemented.');
   }
+  async DataFromPlugin(): Promise<{ payload: Payload; }> {
+    throw new Error('Method not implemented.');
+  }
+  async Test_Costom_Ticket_Receipt(_options: { content: any }): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  
 }

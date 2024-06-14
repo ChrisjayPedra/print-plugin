@@ -13,6 +13,8 @@ import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -26,7 +28,7 @@ public class function {
     public void Test_Pos_SampleTicket_80MM_1(Pointer h) {
         Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_80MM_1: ");
         try {
-            int paperWidth = 384;
+            int paperWidth = 384; //TODO width decrease a little
             int paperHeight = 800;
 
             AutoReplyPrint.INSTANCE.CP_Page_SelectPageModeEx(h, 200, 200, 0, 0, paperWidth, paperHeight);
@@ -83,6 +85,24 @@ public class function {
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("TestFuntion", "TestFuntion: " + e.getMessage());
+        }
+    }
+    public void Test_Costom_Ticket_Receipt(Pointer h,JSONObject data) {
+        Log.d("Test_Costom_Ticket", "Test_Costom_Ticket_Receipt: "+data);
+
+        try {
+            String item = data.getString("item");
+            String price = data.getString("Price");
+            String desc = data.getString("Desc");
+            Log.d("item", "item: "+item);
+            Log.d("price", "price: "+price);
+            Log.d("desc", "desc: "+desc);
+            {
+                Test_Pos_QueryPrintResult(h);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("Test_Costom_Ticket", "Test_Costom_Ticket_Receipt: " + e.getMessage());
         }
     }
     public void Test_Pos_SampleTicket_80MM_2(Pointer h) {

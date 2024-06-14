@@ -21,6 +21,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.display.DisplayManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -71,67 +78,9 @@ public class printPlugin extends Plugin {
     String strUSBPort = "";
     String strCOMPort = "";
     private JSONObject Content;
-
+    private JSObject ret = new JSObject();
     private DisplayManager mDisplayManager;
     private Display[] displays;
-
-    @Override
-    public void load() {
-        super.load();
-        initDisplays();
-    }
-
-    private void initDisplays() {
-        Context context = getContext();
-        if (context != null) {
-            mDisplayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
-            if (mDisplayManager != null) {
-                displays = mDisplayManager.getDisplays();
-            } else {
-                Toast.makeText(context, "DisplayManager is null", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(context, "Context is null", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @PluginMethod
-    public void ShowContentOnSecondaryScreen(PluginCall call) {
-        if (displays != null && displays.length > 1) { // Ensure there's more than one display
-            Context context = getContext();
-            if (context != null) {
-                DifferentDisplay mPresentation = new DifferentDisplay(context, displays[1]);
-                mPresentation.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-                mPresentation.show();
-                Toast.makeText(context, "Secondary display available", Toast.LENGTH_SHORT).show();
-                call.resolve();
-            } else {
-                call.reject("Context is null");
-            }
-        } else {
-            call.reject("No secondary display available");
-            Context context = getContext();
-            if (context != null) {
-                Toast.makeText(context, "No secondary display available", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private class DifferentDisplay extends Presentation {
-        public DifferentDisplay(Context outerContext, Display display) {
-            super(outerContext, display);
-        }
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            // Inflate your desired content view here
-            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.differentdisplay_basket, null);
-            setContentView(view);
-        }
-    }
-
 
     @PluginMethod
     public void Test_Pos_SampleTicket_80MM_1(PluginCall call){
@@ -781,6 +730,7 @@ public class printPlugin extends Plugin {
     }
     @PluginMethod
     public void Test_Pos_SetPrintPosition(PluginCall call){
+
         try{
             function printer = new function();
             printer.setActivity(getActivity());
@@ -850,57 +800,135 @@ public class printPlugin extends Plugin {
         }
     }
 
+    @PluginMethod()
+    public void Test_Costom_Ticket_Receipt(PluginCall call) {
+        try {
+            JSONObject printPayload = call.getObject("content");
+            function printer = new function();
+            printer.setActivity(getActivity());
+            printer.Test_Costom_Ticket_Receipt(h,printPayload);
+            Log.d("try", "Test_Costom_Ticket_Receipt: ");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Plugin", e.getMessage());
+        }
+    }
 
+    @PluginMethod()
+    public void DataFromPlugin(PluginCall call) {
+        try {
 
+            JSObject jsonPayload = new JSObject();
+            jsonPayload.put("payload","test data");
+            call.resolve(jsonPayload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Plugin", e.getMessage());
+        }
+    }
 
+    private void showToast(Context context, String message) {
+        if (context != null) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void OpenBluetooth() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            bridge.getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 
+        }
+    }
 
+    @PluginMethod
+    public void DisplayScreen(PluginCall call) {
+        Context context = getContext();
+        JSONObject printPayload = call.getObject("content");
 
+        try {
+            DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+            Display[] displays = displayManager.getDisplays();
+            String item = printPayload.getString("item");
+            String price = printPayload.getString("Price");
+            String desc = printPayload.getString("Desc");
+            Log.d("item", "item: "+item);
+            Log.d("price", "price: "+price);
+            Log.d("desc", "desc: "+desc);
+            int numberOfDisplays = displays.length;
+            showToast(context,"Number of Displays Detected: " + numberOfDisplays);
 
+            for (Display display : displays) {
+                int displayId = display.getDisplayId();
+                String displayName = display.getName();
 
-
-
+                if (displayId == 0) {
+                    showToast(context,"Main Screen: " + displayName+ displayId);
+                } else if (displayId == 1 || displayId == 6) {
+                    showToast(context,"Auxiliary Screen: " + displayName + displayId);
+                    SecondaryScreen presentation = new SecondaryScreen(getContext(), display,printPayload);
+                    presentation.show();
+                }
+            }
+            call.resolve(ret.put("DisplayScreen", "Success"));
+        } catch (Exception e) {
+            showToast(context,"Error detecting displays: " + e.getMessage());
+            Log.d("MenuItemClicked", "Error detecting displays:  " + e.getMessage());
+        }
+    }
 
     @PluginMethod
     public void testPluginMethod(PluginCall call) {
-        String value = call.getString("msg");
+//        String value = call.getString("msg");
         JSObject ret = new JSObject();
-        ret.put("value", value);
+        ret.put("value", "sample");
         call.resolve(ret);
     }
 
     @PluginMethod
     public void enableServices(PluginCall call) {
-        enableBluetooth();
-        enableWiFi();
-        enableLocation();
-        if (hasAllPermissions()) {
-            call.resolve();
-        } else {
-            requestAllPermissions(call);
+        JSObject ret = new JSObject();
+        try{
+            enableBluetooth();
+            enableWiFi();
+            enableLocation();
+            if (hasAllPermissions()) {
+
+            } else {
+                requestAllPermissions(call);
+            }
+            call.resolve(ret.put("enableServices", "Success"));
+        }catch (Exception e){
+            e.printStackTrace();
+            call.reject("Error:"+e.getMessage());
         }
     }
 
     @PluginMethod
     public void AddCallback(PluginCall call) {
+        JSObject ret = new JSObject();
+        OpenBluetooth();
         try {
+            Log.d("Try", "AutoReplyPrint Library_Version" + AutoReplyPrint.INSTANCE.CP_Library_Version());
             AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenedEvent(opened_callback, Pointer.NULL);
             AutoReplyPrint.INSTANCE.CP_Port_AddOnPortOpenFailedEvent(openfailed_callback, Pointer.NULL);
             AutoReplyPrint.INSTANCE.CP_Port_AddOnPortClosedEvent(closed_callback, Pointer.NULL);
             AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterStatusEvent(status_callback, Pointer.NULL);
             AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterReceivedEvent(received_callback, Pointer.NULL);
             AutoReplyPrint.INSTANCE.CP_Printer_AddOnPrinterPrintedEvent(printed_callback, Pointer.NULL);
-            Log.d("Try", "addCallBack Method" + AutoReplyPrint.INSTANCE.CP_Library_Version());
-            call.resolve();
+            ret.put("AddCallback", "Success");
+            call.resolve(ret);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Catch", "addCallBack: e" + e.getMessage());
-            call.reject(e.getMessage());
+            call.reject("AddCallback",e.getMessage());
         }
     }
 
     @PluginMethod
     public void RemoveCallback(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenedEvent(opened_callback);
             AutoReplyPrint.INSTANCE.CP_Port_RemoveOnPortOpenFailedEvent(openfailed_callback);
@@ -909,16 +937,17 @@ public class printPlugin extends Plugin {
             AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterReceivedEvent(received_callback);
             AutoReplyPrint.INSTANCE.CP_Printer_RemoveOnPrinterPrintedEvent(printed_callback);
             Log.d("Try", "RemoveCallBack Method");
-            call.resolve();
+            call.resolve(ret.put("RemoveCallback", "Success"));
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Catch", "RemoveCallBack: e" + e.getMessage());
-            call.reject(e.getMessage());
+            call.reject("RemoveCallback",e.getMessage());
         }
     }
 
     @PluginMethod
     public void EnumBle(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             IntByReference cancel = new IntByReference(0);
             AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback callback = new AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback() {
@@ -932,6 +961,7 @@ public class printPlugin extends Plugin {
                                             Log.d("BT4", "run: BT4" + device_address);
                                             strBT4Address = device_address;
                                             Log.d("BT4", "run: BT4" + device_address);
+                                            call.resolve(ret.put("EnumBle", "Success"));
                                         }
                                     }
                             );
@@ -949,6 +979,7 @@ public class printPlugin extends Plugin {
 
     @PluginMethod
     public void EnumBt(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             IntByReference cancel = new IntByReference(0);
             AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback callback = new AutoReplyPrint.CP_OnBluetoothDeviceDiscovered_Callback() {
@@ -962,6 +993,7 @@ public class printPlugin extends Plugin {
                                             Log.d("BT2", "run: BT2" + device_address);
                                             strBT2Address = device_address;
                                             Log.d("BT2", "run: BT2" + strBT2Address);
+                                            call.resolve(ret.put("EnumBt", "Success"));
                                         }
                                     }
                             );
@@ -979,20 +1011,22 @@ public class printPlugin extends Plugin {
 
     @PluginMethod
     public void EnumNet(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             IntByReference cancel = new IntByReference(0);
             AutoReplyPrint.CP_OnNetPrinterDiscovered_Callback callback = new AutoReplyPrint.CP_OnNetPrinterDiscovered_Callback() {
                 @Override
                 public void CP_OnNetPrinterDiscovered(String local_ip,String disconvered_mac,final String disconvered_ip,String discovered_name,Pointer private_data) {
                     getActivity().runOnUiThread(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Log.d("cbxListNET", "cbxListNET: " + disconvered_ip);
-                                            strNETAddress = disconvered_ip;
-                                        }
-                                    }
-                            );
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.d("cbxListNET", "cbxListNET: " + disconvered_ip);
+                                    strNETAddress = disconvered_ip;
+                                    call.resolve(ret.put("EnumNet", "Success"));
+                                }
+                            }
+                    );
                 }
             };
             AutoReplyPrint.INSTANCE.CP_Port_EnumNetPrinter(3000, cancel, callback, null);
@@ -1007,6 +1041,7 @@ public class printPlugin extends Plugin {
 
     @PluginMethod
     public void EnumCom(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             String[] devicePaths = AutoReplyPrint.CP_Port_EnumCom_Helper.EnumCom();
             if (devicePaths != null) {
@@ -1015,6 +1050,7 @@ public class printPlugin extends Plugin {
                     if (strCOMPort.trim().isEmpty()) {
                         strCOMPort = name;
                         Log.d("Device COM name", "EnumCom: " + strCOMPort);
+                        call.resolve(ret.put("EnumCom", "Success"));
                     }
                     Log.d("Device name", "EnumCom: " + name);
                 }
@@ -1031,6 +1067,7 @@ public class printPlugin extends Plugin {
 
     @PluginMethod
     public void EnumUsb(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             String[] devicePaths = AutoReplyPrint.CP_Port_EnumUsb_Helper.EnumUsb();
             if (devicePaths != null) {
@@ -1039,6 +1076,7 @@ public class printPlugin extends Plugin {
                     if (strUSBPort.trim().isEmpty()) {
                         strUSBPort = name;
                         Log.d("Device usb name", "EnumUsb: " + strUSBPort);
+                        call.resolve(ret.put("EnumUsb", "Success"));
                     }
                 }
             }
@@ -1052,20 +1090,22 @@ public class printPlugin extends Plugin {
 
     @PluginMethod
     public void EnumWiFiP2P(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             IntByReference cancel = new IntByReference(0);
             AutoReplyPrint.CP_OnWiFiP2PDeviceDiscovered_Callback callback = new AutoReplyPrint.CP_OnWiFiP2PDeviceDiscovered_Callback() {
                 @Override
                 public void CP_OnWiFiP2PDeviceDiscovered(String device_name,final String device_address, String device_type, Pointer private_data) {
                     getActivity().runOnUiThread(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Log.d("device name Wifi", "run: " + device_address);
-                                            strWiFiP2PAddress = device_address;
-                                        }
-                                    }
-                            );
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    Log.d("device name Wifi", "run: " + device_address);
+                                    strWiFiP2PAddress = device_address;
+                                    call.resolve(ret.put("EnumWiFiP2P", "Success"));
+                                }
+                            }
+                    );
                 }
             };
             AutoReplyPrint.INSTANCE.CP_Port_EnumWiFiP2PDevice(5000, cancel, callback, null);
@@ -1080,6 +1120,7 @@ public class printPlugin extends Plugin {
 
     @PluginMethod
     public void OpenPort(PluginCall call) {
+        JSObject ret = new JSObject();
         try {
             JSObject contentObject = call.getObject("content");
             Log.d("Content", "OpenPort: "+contentObject);
@@ -1088,28 +1129,33 @@ public class printPlugin extends Plugin {
             int flowControlIndex = contentObject.getInteger("flowControlIndex", -1);
             Log.d("Content", "OpenPort: "+type);
             Log.d("Content", "OpenPort: "+contentObject);
-
-                    if (type.equals("BT2")) {
-                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenBtSpp(strBT2Address, 1);
-                        Log.d("strBT2Address", "run: "+strBT2Address);
-                    } else if (type.equals("BT4")) {
-                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenBtBle(strBT4Address, 1);
-                        Log.d("strBT4Address", "run: "+strBT4Address);
-                    } else if (type.equals("NET")) {
-                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenTcp(null, strNETAddress, (short) 9100, 5000, 1);
-                    } else if (type.equals("USB")) {
-                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenUsb(strUSBPort, 1);
-                    } else if (type.equals("COM")) {
-                        h = AutoReplyPrint.INSTANCE.CP_Port_OpenCom(strCOMPort, nBaudTable, AutoReplyPrint.CP_ComDataBits_8, AutoReplyPrint.CP_ComParity_NoParity, AutoReplyPrint.CP_ComStopBits_One, flowControlIndex, 1);
-                    } else if (type.equals("WiFi")) {
-                        //if (AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_IsConnected())
-                        //    AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Disconnect();
-                        int host_address = AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Connect(strWiFiP2PAddress, 20000);
-                        if (host_address != 0) {
-                            String host_address_string = String.format("%d.%d.%d.%d", host_address & 0x000000ffl, (host_address & 0x0000ff00l) >> 8, (host_address & 0x00ff0000l) >> 16, (host_address & 0xff000000l) >> 24);
-                            h = AutoReplyPrint.INSTANCE.CP_Port_OpenTcp(null, host_address_string, (short) 9100, 5000, 1);
-                        }
-                    }
+            if (type.equals("BT2")) {
+                h = AutoReplyPrint.INSTANCE.CP_Port_OpenBtSpp(strBT2Address, 1);
+                Log.d("strBT2Address", "run: "+strBT2Address);
+                call.resolve(ret.put("BT2", "Success"));
+            } else if (type.equals("BT4")) {
+                h = AutoReplyPrint.INSTANCE.CP_Port_OpenBtBle(strBT4Address, 1);
+                Log.d("strBT4Address", "run: "+strBT4Address);
+                call.resolve(ret.put("BT4", "Success"));
+            } else if (type.equals("NET")) {
+                h = AutoReplyPrint.INSTANCE.CP_Port_OpenTcp(null, strNETAddress, (short) 9100, 5000, 1);
+                call.resolve(ret.put("NET", "Success"));
+            } else if (type.equals("USB")) {
+                h = AutoReplyPrint.INSTANCE.CP_Port_OpenUsb(strUSBPort, 1);
+                call.resolve(ret.put("USB", "Success"));
+            } else if (type.equals("COM")) {
+                h = AutoReplyPrint.INSTANCE.CP_Port_OpenCom(strCOMPort, nBaudTable, AutoReplyPrint.CP_ComDataBits_8, AutoReplyPrint.CP_ComParity_NoParity, AutoReplyPrint.CP_ComStopBits_One, flowControlIndex, 1);
+                call.resolve(ret.put("COM", "Success"));
+            } else if (type.equals("WiFi")) {
+                //if (AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_IsConnected())
+                //    AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Disconnect();
+                int host_address = AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Connect(strWiFiP2PAddress, 20000);
+                if (host_address != 0) {
+                    String host_address_string = String.format("%d.%d.%d.%d", host_address & 0x000000ffl, (host_address & 0x0000ff00l) >> 8, (host_address & 0x00ff0000l) >> 16, (host_address & 0xff000000l) >> 24);
+                    h = AutoReplyPrint.INSTANCE.CP_Port_OpenTcp(null, host_address_string, (short) 9100, 5000, 1);
+                    call.resolve(ret.put("WiFi", "Success"));
+                }
+            }
 
             Log.d("Open port", "OpenPort: try ");
         } catch (Exception e) {
@@ -1119,15 +1165,17 @@ public class printPlugin extends Plugin {
     }
     @PluginMethod
     public void ClosePort(PluginCall call) {
+        JSObject ret = new JSObject();
         try{
             if (h != Pointer.NULL) {
                 AutoReplyPrint.INSTANCE.CP_Port_Close(h);
                 h = Pointer.NULL;
+                call.resolve(ret.put("ClosePort", "Success"));
             }
             //if (AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_IsConnected())
             //    AutoReplyPrint.INSTANCE.CP_Port_WiFiP2P_Disconnect();
             Log.d("ClosePort", "ClosePort: try");
-            call.resolve();
+
         }catch (Exception e){
             e.printStackTrace();
             Log.d("ClosePort", "ClosePort: "+e.getMessage());
@@ -1146,7 +1194,6 @@ public class printPlugin extends Plugin {
             TestUtils.showMessageOnUiThread(getActivity(), "Print Success");
         }
     }
-
     AutoReplyPrint.CP_OnPortOpenedEvent_Callback opened_callback = new AutoReplyPrint.CP_OnPortOpenedEvent_Callback() {
         @Override
         public void CP_OnPortOpenedEvent(Pointer handle, String name, Pointer private_data) {
@@ -1222,48 +1269,70 @@ public class printPlugin extends Plugin {
                                             error_status_string += "[ERROR_CUTTER]";
                                             Toast.makeText(getContext(), error_status_string += "[ERROR_CUTTER]", Toast.LENGTH_SHORT).show();
                                         }
-                                          if (status.ERROR_FLASH())
-                                            error_status_string += "[ERROR_FLASH]";
+                                          if (status.ERROR_FLASH()){
+                                              error_status_string += "[ERROR_FLASH]";
 
-                                            Toast.makeText(getContext(),error_status_string += "[ERROR_FLASH]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_NOPAPER())
+                                              Toast.makeText(getContext(),error_status_string += "[ERROR_FLASH]", Toast.LENGTH_SHORT).show();
+
+                                          }
+                                        if (status.ERROR_NOPAPER()){
                                             error_status_string += "[ERROR_NOPAPER]";
 
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_NOPAPER]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_VOLTAGE())
-                                            error_status_string += "[ERROR_VOLTAGE]";
 
-                                            Toast.makeText(getContext(),error_status_string += "[ERROR_VOLTAGE]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_MARKER())
+                                        }
+                                         if (status.ERROR_VOLTAGE()){
+                                             error_status_string += "[ERROR_VOLTAGE]";
+
+                                             Toast.makeText(getContext(),error_status_string += "[ERROR_VOLTAGE]", Toast.LENGTH_SHORT).show();
+
+                                         }
+                                        if (status.ERROR_MARKER()){
                                             error_status_string += "[ERROR_MARKER]";
 
-                                             Toast.makeText(getContext(),error_status_string += "[ERROR_MARKER]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_ENGINE())
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_MARKER]", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        if (status.ERROR_ENGINE()){
                                             error_status_string += "[ERROR_MOVEMENT]";
 
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_MOVEMENT]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_OVERHEAT())
+
+                                        }
+                                        if (status.ERROR_OVERHEAT()){
                                             error_status_string += "[ERROR_OVERHEAT]";
 
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_MOVEMENT]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_COVERUP())
-                                            error_status_string += "[ERROR_COVERUP]";
 
+                                        }
+                                         if (status.ERROR_COVERUP()){
+                                             error_status_string += "[ERROR_COVERUP]";
+
+                                             Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
+
+                                         }
+                                        if (status.ERROR_MOTOR()){
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
-                                        if (status.ERROR_MOTOR())
-                                            Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
+
+                                        }
 
                                         error_status_string += "[ERROR_MOTOR]";
                                         Toast.makeText(getContext(),error_status_string += "[ERROR_MOTOR]", Toast.LENGTH_SHORT).show();
-
                                     }
                                     String info_status_string = String.format(" Printer Info Status: 0x%04X", printer_info_status & 0xffff);
-                                    if (status.INFO_LABELMODE())
+                                    if (status.INFO_LABELMODE()){
                                         info_status_string += "[Label Mode]";
-                                    if (status.INFO_LABELPAPER())
+                                        Toast.makeText(getContext(),error_status_string += "[Label Mode]", Toast.LENGTH_SHORT).show();
+                                    }
+                                    if (status.INFO_LABELPAPER()){
                                         info_status_string += "[Label Paper]";
-                                    if (status.INFO_PAPERNOFETCH())
+                                        Toast.makeText(getContext(),error_status_string += "[Label Paper]", Toast.LENGTH_SHORT).show();
+                                    }
+                                    if (status.INFO_PAPERNOFETCH()){
                                         info_status_string += "[Paper Not Fetch]";
+                                        Toast.makeText(getContext(),error_status_string += "[Paper Not Fetch]", Toast.LENGTH_SHORT).show();
+
+                                    }
                                     Log.d("PrinterErrorStatus", "textViewPrinterErrorStatus: " + error_status_string);
                                     Log.d("PrinterInfoStatus", "textViewPrinterErrorStatus: " + info_status_string);
                                 }
@@ -1306,9 +1375,8 @@ public class printPlugin extends Plugin {
         }
     };
 
-
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case RequestCode_RequestAllPermissions:
                 if (hasAllPermissions()) {
@@ -1321,7 +1389,6 @@ public class printPlugin extends Plugin {
                 break;
         }
     }
-
     public boolean hasAllPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean hasLocationPermission =
@@ -1336,11 +1403,20 @@ public class printPlugin extends Plugin {
                             ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                                     PackageManager.PERMISSION_GRANTED
                     );
-            return hasLocationPermission && hasCameraPermission && hasStoragePermission;
+
+            boolean hasBluetoothConnectPermission =
+                    (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED);
+            boolean hasBluetoothScanPermission =
+                    (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_GRANTED);
+            boolean hasBluetoothAdminPermission =
+                    (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH_ADMIN) == PackageManager.PERMISSION_GRANTED);
+
+            return hasLocationPermission && hasCameraPermission && hasStoragePermission &&
+                    hasBluetoothConnectPermission && hasBluetoothScanPermission && hasBluetoothAdminPermission;
+
         }
         return true;
     }
-
     public void requestAllPermissions(PluginCall call) {
         saveCall(call);
         pluginRequestPermissions(new String[]{
@@ -1351,8 +1427,6 @@ public class printPlugin extends Plugin {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
         }, MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE);
     }
-
-
     protected void handleRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.handleRequestPermissionsResult(requestCode, permissions, grantResults);
 
@@ -1371,21 +1445,23 @@ public class printPlugin extends Plugin {
 
         savedCall.resolve();
     }
-
     @SuppressLint("MissingPermission")
     public void enableBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null && !adapter.isEnabled()) {
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH_SCAN)
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH_CONNECT)
                     != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH_SCAN)
+                            != PackageManager.PERMISSION_GRANTED ||
                     ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                            != PackageManager.PERMISSION_GRANTED) {
+                            != PackageManager.PERMISSION_GRANTED){
                 // Request permissions
                 ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION},
+                        new String[]{Manifest.permission.BLUETOOTH_SCAN
+                                ,Manifest.permission.BLUETOOTH_CONNECT
+                                ,Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE);
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                bridge.getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+
                 Toast.makeText(getContext(), "enableBluetooth: true", Toast.LENGTH_SHORT).show();
                 Log.d("Bluetooth", "enableBluetooth: true");
             } else {
@@ -1393,15 +1469,11 @@ public class printPlugin extends Plugin {
                 bridge.getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 Toast.makeText(getContext(), "Already granted", Toast.LENGTH_SHORT).show();
                 Log.d("Bluetooth", "enableBluetooth: true");
-                // Permissions already granted, start Bluetooth scanning
                 Log.d("Bluetooth", "Already granted");
             }
 
-        } else {
-
         }
     }
-
     public void enableWiFi() {
         WifiManager wifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (null != wifiManager) {
@@ -1413,7 +1485,6 @@ public class printPlugin extends Plugin {
             }
         }
     }
-
     public void enableLocation() {
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         if (null != locationManager) {

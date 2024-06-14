@@ -14,8 +14,10 @@ npx cap sync
 <docgen-index>
 
 * [`testPluginMethod(...)`](#testpluginmethod)
-* [`enableServices()`](#enableservices)
+* [`DataFromPlugin()`](#datafromplugin)
+* [`Test_Costom_Ticket_Receipt(...)`](#test_costom_ticket_receipt)
 * [`AddCallback()`](#addcallback)
+* [`enableServices()`](#enableservices)
 * [`RemoveCallback()`](#removecallback)
 * [`EnumBle()`](#enumble)
 * [`EnumBt()`](#enumbt)
@@ -32,7 +34,8 @@ npx cap sync
 * [`ClosePort()`](#closeport)
 * [`Test_Pos_PrintBarcode()`](#test_pos_printbarcode)
 * [`Test_Pos_PrintQRCode()`](#test_pos_printqrcode)
-* [`ShowContentOnSecondaryScreen()`](#showcontentonsecondaryscreen)
+* [`DisplayScreen(...)`](#displayscreen)
+* [Interfaces](#interfaces)
 
 </docgen-index>
 
@@ -54,13 +57,26 @@ testPluginMethod(options: { msg: string; }) => Promise<{ value: string; }>
 --------------------
 
 
-### enableServices()
+### DataFromPlugin()
 
 ```typescript
-enableServices() => Promise<{ value: string; }>
+DataFromPlugin() => Promise<{ payload: Payload; }>
 ```
 
-**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+**Returns:** <code>Promise&lt;{ payload: <a href="#payload">Payload</a>; }&gt;</code>
+
+--------------------
+
+
+### Test_Costom_Ticket_Receipt(...)
+
+```typescript
+Test_Costom_Ticket_Receipt(options: { content: any; }) => Promise<void>
+```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ content: any; }</code> |
 
 --------------------
 
@@ -69,6 +85,17 @@ enableServices() => Promise<{ value: string; }>
 
 ```typescript
 AddCallback() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### enableServices()
+
+```typescript
+enableServices() => Promise<{ value: string; }>
 ```
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
@@ -254,14 +281,28 @@ Test_Pos_PrintQRCode() => Promise<{ value: string; }>
 --------------------
 
 
-### ShowContentOnSecondaryScreen()
+### DisplayScreen(...)
 
 ```typescript
-ShowContentOnSecondaryScreen() => Promise<{ value: string; }>
+DisplayScreen(options: { content: any; }) => Promise<{ value: string; }>
 ```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ content: any; }</code> |
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
 --------------------
+
+
+### Interfaces
+
+
+#### Payload
+
+| Prop          | Type                |
+| ------------- | ------------------- |
+| **`payload`** | <code>string</code> |
 
 </docgen-api>
