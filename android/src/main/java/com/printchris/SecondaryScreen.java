@@ -35,7 +35,7 @@ public class SecondaryScreen extends Presentation {
                 TextView textName = view.findViewById(R.id.Display_item_Name);
                 TextView textPrice = view.findViewById(R.id.Display_item_Price);
                 TextView textDesc = view.findViewById(R.id.Display_item_Desc);
-                String item = data.getString("item");
+                String item = data.getString("Name");
                 String price = data.getString("Price");
                 String desc = data.getString("Desc");
                 Log.d("item", "item: "+item);

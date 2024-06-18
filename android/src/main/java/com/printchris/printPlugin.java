@@ -801,19 +801,21 @@ public class printPlugin extends Plugin {
     }
 
     @PluginMethod()
-    public void Test_Costom_Ticket_Receipt(PluginCall call) {
+    public void Test_Custom_Ticket_Receipt(PluginCall call) {
+        Log.d("Plugin_Custom_ticket", "Received call: " + call.getData());
+
         try {
-            JSONObject printPayload = call.getObject("content");
+            JSObject content = call.getData();
+            Log.d("Plugin_Custom_ticket", "Test_Custom_Ticket_Receipt: "+content);
             function printer = new function();
             printer.setActivity(getActivity());
-            printer.Test_Costom_Ticket_Receipt(h,printPayload);
-            Log.d("try", "Test_Costom_Ticket_Receipt: ");
+            printer.Test_Custom_Ticket_Receipt(h,content);
+            Log.d("try", "Test_Custom_Ticket_Receipt: ");
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Plugin", e.getMessage());
         }
     }
-
     @PluginMethod()
     public void DataFromPlugin(PluginCall call) {
         try {
@@ -844,16 +846,17 @@ public class printPlugin extends Plugin {
 
     @PluginMethod
     public void DisplayScreen(PluginCall call) {
+        Log.d("Plugin_Custom_ticket", "Received call: " + call.getData());
         Context context = getContext();
         JSONObject printPayload = call.getObject("content");
 
         try {
             DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
             Display[] displays = displayManager.getDisplays();
-            String item = printPayload.getString("item");
+            String Name = printPayload.getString("Name");
             String price = printPayload.getString("Price");
             String desc = printPayload.getString("Desc");
-            Log.d("item", "item: "+item);
+            Log.d("Name", "Name: "+Name);
             Log.d("price", "price: "+price);
             Log.d("desc", "desc: "+desc);
             int numberOfDisplays = displays.length;
@@ -961,7 +964,7 @@ public class printPlugin extends Plugin {
                                             Log.d("BT4", "run: BT4" + device_address);
                                             strBT4Address = device_address;
                                             Log.d("BT4", "run: BT4" + device_address);
-                                            call.resolve(ret.put("EnumBle", "Success"));
+                                            call.resolve(ret.put("EnumBle", "Success "+device_address));
                                         }
                                     }
                             );
@@ -969,7 +972,7 @@ public class printPlugin extends Plugin {
             };
             AutoReplyPrint.INSTANCE.CP_Port_EnumBleDevice(20000, cancel, callback, null);
             Log.d("BT4", "EnumBle: try ");
-            call.resolve();
+            call.resolve(ret.put("EnumBle", "Scan Stop"));
         } catch (Exception e) {
             Log.d("BT4", "EnumBle: catch " + e.getMessage());
             call.reject("error");
@@ -1001,7 +1004,7 @@ public class printPlugin extends Plugin {
             };
             AutoReplyPrint.INSTANCE.CP_Port_EnumBtDevice(12000, cancel, callback, null);
             Log.d("BT2", "EnumBt: try ");
-            call.resolve();
+            call.resolve(ret.put("EnumBt", "Scan Stop"));
         } catch (Exception e) {
             Log.d("BT2", "EnumBt: catch " + e.getMessage());
             call.reject("error");
@@ -1031,7 +1034,7 @@ public class printPlugin extends Plugin {
             };
             AutoReplyPrint.INSTANCE.CP_Port_EnumNetPrinter(3000, cancel, callback, null);
             Log.d("NET", "NET: try ");
-            call.resolve();
+            call.resolve(ret.put("NET", "Scan Stop"));
         } catch (Exception e) {
             Log.d("NET", "NET: catch " + e.getMessage());
             call.reject("error");
@@ -1056,7 +1059,7 @@ public class printPlugin extends Plugin {
                 }
             }
             Log.d("COM", "COM: try ");
-            call.resolve();
+            call.resolve(ret.put("COM", "Scan Stop"));
         } catch (Exception e) {
             Log.d("COM", "COM: catch " + e.getMessage());
             call.reject("error");
@@ -1081,7 +1084,7 @@ public class printPlugin extends Plugin {
                 }
             }
             Log.d("USB", "USB: try ");
-            call.resolve();
+            call.resolve(ret.put("USB", "Scan Stop"));
         } catch (Exception e) {
             Log.d("USB", "USB: catch " + e.getMessage());
             call.reject("error");
@@ -1110,7 +1113,7 @@ public class printPlugin extends Plugin {
             };
             AutoReplyPrint.INSTANCE.CP_Port_EnumWiFiP2PDevice(5000, cancel, callback, null);
             Log.d("WIFI", "WIFI: try ");
-            call.resolve();
+            call.resolve(ret.put("WIFI", "Scan Stop"));
         } catch (Exception e) {
             Log.d("WIFI", "WIFI: catch " + e.getMessage());
             call.reject("error");
@@ -1203,6 +1206,7 @@ public class printPlugin extends Plugin {
                                 @Override
                                 public void run() {
                                     Toast.makeText(getContext(), "Open Success", Toast.LENGTH_SHORT).show();
+
                                     Log.d("opened_callback", "Open Success ");
                                 }
                             }

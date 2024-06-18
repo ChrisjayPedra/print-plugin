@@ -15,7 +15,6 @@ npx cap sync
 
 * [`testPluginMethod(...)`](#testpluginmethod)
 * [`DataFromPlugin()`](#datafromplugin)
-* [`Test_Costom_Ticket_Receipt(...)`](#test_costom_ticket_receipt)
 * [`AddCallback()`](#addcallback)
 * [`enableServices()`](#enableservices)
 * [`RemoveCallback()`](#removecallback)
@@ -35,6 +34,7 @@ npx cap sync
 * [`Test_Pos_PrintBarcode()`](#test_pos_printbarcode)
 * [`Test_Pos_PrintQRCode()`](#test_pos_printqrcode)
 * [`DisplayScreen(...)`](#displayscreen)
+* [`Test_Custom_Ticket_Receipt(...)`](#test_custom_ticket_receipt)
 * [Interfaces](#interfaces)
 
 </docgen-index>
@@ -64,19 +64,6 @@ DataFromPlugin() => Promise<{ payload: Payload; }>
 ```
 
 **Returns:** <code>Promise&lt;{ payload: <a href="#payload">Payload</a>; }&gt;</code>
-
---------------------
-
-
-### Test_Costom_Ticket_Receipt(...)
-
-```typescript
-Test_Costom_Ticket_Receipt(options: { content: any; }) => Promise<void>
-```
-
-| Param         | Type                           |
-| ------------- | ------------------------------ |
-| **`options`** | <code>{ content: any; }</code> |
 
 --------------------
 
@@ -292,6 +279,19 @@ DisplayScreen(options: { content: any; }) => Promise<{ value: string; }>
 | **`options`** | <code>{ content: any; }</code> |
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### Test_Custom_Ticket_Receipt(...)
+
+```typescript
+Test_Custom_Ticket_Receipt(options: { content: any; }) => Promise<void>
+```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ content: any; }</code> |
 
 --------------------
 

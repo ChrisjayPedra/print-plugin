@@ -71,7 +71,7 @@ export class printPluginWeb extends WebPlugin implements printPluginPlugin {
   async DataFromPlugin(): Promise<{ payload: Payload; }> {
     throw new Error('Method not implemented.');
   }
-  async Test_Costom_Ticket_Receipt(_options: { content: any }): Promise<void> {
+  async Test_Custom_Ticket_Receipt(_options: { content: any }): Promise<void> {
     throw new Error('Method not implemented.');
   }
   

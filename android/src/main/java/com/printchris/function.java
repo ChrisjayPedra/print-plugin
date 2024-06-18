@@ -13,6 +13,7 @@ import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -21,7 +22,7 @@ import java.util.Date;
 public class function {
 
     private Activity activity;
-
+    private JSONObject data;
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
@@ -87,22 +88,89 @@ public class function {
             Log.d("TestFuntion", "TestFuntion: " + e.getMessage());
         }
     }
-    public void Test_Costom_Ticket_Receipt(Pointer h,JSONObject data) {
-        Log.d("Test_Costom_Ticket", "Test_Costom_Ticket_Receipt: "+data);
+    public void Test_Custom_Ticket_Receipt(Pointer h, JSONObject data) {
+        Log.d("Test_Costom_Ticket", "Test_Costom_Ticket_Receipt: " + data);
 
         try {
-            String item = data.getString("item");
-            String price = data.getString("Price");
-            String desc = data.getString("Desc");
-            Log.d("item", "item: "+item);
-            Log.d("price", "price: "+price);
-            Log.d("desc", "desc: "+desc);
-            {
-                Test_Pos_QueryPrintResult(h);
+            int paperWidth = 384;
+
+            AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "123xxstreet,xxxcity,xxxxstate\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "TEL 9999-99-9999  C#2\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_HCenter);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "yyyy-MM-dd HH:mm:ss");
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+
+            // Print items dynamically
+            JSONArray items = data.getJSONArray("content");
+            double total = 0.0;
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                String itemName = item.getString("Name");
+                String itemDesc = item.getString("Desc"); // Retrieve description field
+                double itemPrice = item.getDouble("Price");
+                Log.d("item", "itemName: "+itemName);
+                total += itemPrice;
+                AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+                AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemName);
+                AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemDesc); // Print description
+                AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+                AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", itemPrice));
             }
+
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Before adding tax");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", total));
+
+            double tax = total * 0.05;  // Assuming 5% tax
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "tax 5.0%");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", tax));
+
+            String line = "";
+            for (int i = 0; i < paperWidth / 12; ++i)
+                line += " ";
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 2);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, line);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 0);
+
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 1, 0);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "total");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 2 * 7);
+            double totalWithTax = total + tax;
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", totalWithTax));
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 0, 0);
+
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Customer's payment");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$200.00");  // Assuming fixed payment for simplicity
+
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Change");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            double change = 200.00 - totalWithTax;
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", change));
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+
+            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, "12345678901");
+
+            AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
+
+            Test_Pos_QueryPrintResult(h);
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Test_Costom_Ticket", "Test_Costom_Ticket_Receipt: " + e.getMessage());
+            Log.d("Error_Test_Costom", "Test_Costom_Ticket_Receipt: " + e.getMessage());
         }
     }
     public void Test_Pos_SampleTicket_80MM_2(Pointer h) {
