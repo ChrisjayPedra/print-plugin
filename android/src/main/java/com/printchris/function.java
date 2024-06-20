@@ -93,81 +93,101 @@ public class function {
 
         try {
             int paperWidth = 384;
+            JSONObject content = data.getJSONObject("content");
+            double payment = content.getDouble("payment");
+            double change = content.getDouble("change");
+            double tax = content.getDouble("tax");
+            double itemSubtotal = content.getDouble("itemSubtotal");
+            double totalAmount = content.getDouble("totalAmount");
+            String date = content.getString("date");
+            String tranID = content.getString("tranID");
+            String paymentType = content.getString("paymentType");
+
+            Log.d("payment", "payment: "+payment);
+            Log.d("change", "change: "+change);
+            Log.d("tax", "tax: "+tax);
+            Log.d("itemSubtotal", "itemSubtotal: "+itemSubtotal);
+            Log.d("totalAmount", "totalAmount: "+totalAmount);
+            Log.d("date", "date: "+date);
+            Log.d("tranID", "tranID: "+tranID);
+            Log.d("paymentType", "paymentType: " + paymentType);
 
             AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "123xxstreet,xxxcity,xxxxstate\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Bell POS\r\n");
             AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "TEL 9999-99-9999  C#2\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, tranID);
             AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_HCenter);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "yyyy-MM-dd HH:mm:ss");
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, date);
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
 
             // Print items dynamically
-            JSONArray items = data.getJSONArray("content");
-            double total = 0.0;
+
+
+            JSONArray items = content.getJSONArray("item");
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
-                String itemName = item.getString("Name");
-                String itemDesc = item.getString("Desc"); // Retrieve description field
-                double itemPrice = item.getDouble("Price");
-                Log.d("item", "itemName: "+itemName);
-                total += itemPrice;
+                String itemName = item.getString("title");
+                String quantity = item.getString("quantity");
+                String itemDesc = item.getString("desc"); // Corrected key to match JSON
+                double itemPrice = item.getDouble("price"); // Assuming price is a string in JSON, convert to double
+                Log.d("item", "itemName: " + itemName);
+                Log.d("quantity", "quantity: " + quantity);
+                Log.d("itemPrice", "itemPrice: " + itemPrice);
+
                 AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
                 AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemName);
-                AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemDesc); // Print description
+                AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemDesc);
                 AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
                 AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", itemPrice));
             }
 
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Before adding tax");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", total));
 
-            double tax = total * 0.05;  // Assuming 5% tax
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "tax 5.0%");
+// Printing subtotal (itemSubtotal)
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Subtotal:\r\n");
             AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", tax));
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", itemSubtotal) + "\r\n");
 
-            String line = "";
-            for (int i = 0; i < paperWidth / 12; ++i)
-                line += " ";
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 2);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, line);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextUnderline(h, 0);
-
+// Printing tax
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 1, 0);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "total");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 2 * 7);
-            double totalWithTax = total + tax;
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", totalWithTax));
-            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 0, 0);
-
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Customer's payment");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 7);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "$200.00");  // Assuming fixed payment for simplicity
-
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Change");
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Tax:\r\n");
             AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            double change = 200.00 - totalWithTax;
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", change));
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", tax) + "\r\n");
 
+// Printing total amount
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Total Amount:\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", totalAmount) + "\r\n");
+
+// Printing payment
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Payment:\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", payment) + "\r\n");
+
+// Printing change
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Change:\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", change) + "\r\n");
+
+// Printing payment type
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Payment Type:\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, paymentType + "\r\n");
+
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, "12345678901");
 
             AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
-
             Test_Pos_QueryPrintResult(h);
+
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Error_Test_Costom", "Test_Costom_Ticket_Receipt: " + e.getMessage());

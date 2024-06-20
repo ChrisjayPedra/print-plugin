@@ -6,7 +6,6 @@ declare module "@capacitor/core"{
 export interface printPluginPlugin {
   testPluginMethod(options: { msg: string }): Promise<{ value: string }>;
   DataFromPlugin(): Promise<{payload: Payload }> 
- 
   AddCallback(): Promise<{ value: string }>;
   enableServices(): Promise<{ value: string }>;
   RemoveCallback(): Promise<{ value: string }>;

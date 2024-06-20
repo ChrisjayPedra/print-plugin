@@ -44,6 +44,7 @@ import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.security.PublicKey;
@@ -800,6 +801,7 @@ public class printPlugin extends Plugin {
         }
     }
 
+
     @PluginMethod()
     public void Test_Custom_Ticket_Receipt(PluginCall call) {
         Log.d("Plugin_Custom_ticket", "Received call: " + call.getData());
@@ -811,6 +813,7 @@ public class printPlugin extends Plugin {
             printer.setActivity(getActivity());
             printer.Test_Custom_Ticket_Receipt(h,content);
             Log.d("try", "Test_Custom_Ticket_Receipt: ");
+            call.resolve(ret.put("Custom_ticket","success"));
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Plugin", e.getMessage());
@@ -843,22 +846,45 @@ public class printPlugin extends Plugin {
 
         }
     }
-
     @PluginMethod
     public void DisplayScreen(PluginCall call) {
-        Log.d("Plugin_Custom_ticket", "Received call: " + call.getData());
+        Log.d("Plugin_Display", "Received call: " + call.getData());
         Context context = getContext();
-        JSONObject printPayload = call.getObject("content");
-
+        JSObject data = call.getData();
         try {
             DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
             Display[] displays = displayManager.getDisplays();
-            String Name = printPayload.getString("Name");
-            String price = printPayload.getString("Price");
-            String desc = printPayload.getString("Desc");
-            Log.d("Name", "Name: "+Name);
-            Log.d("price", "price: "+price);
-            Log.d("desc", "desc: "+desc);
+
+            JSONObject content = data.getJSONObject("content");
+            JSONArray items = content.getJSONArray("item");
+            double payment = content.getDouble("payment");
+            double change = content.getDouble("change");
+            double tax = content.getDouble("tax");
+            double itemSubtotal = content.getDouble("itemSubtotal");
+            double totalAmount = content.getDouble("totalAmount");
+            String date = content.getString("date");
+            String tranID = content.getString("tranID");
+            String paymentType = content.getString("paymentType");
+            Log.d("payment", "payment: "+payment);
+            Log.d("change", "change: "+change);
+            Log.d("tax", "tax: "+tax);
+            Log.d("itemSubtotal", "itemSubtotal: "+itemSubtotal);
+            Log.d("totalAmount", "totalAmount: "+totalAmount);
+            Log.d("date", "date: "+date);
+            Log.d("tranID", "tranID: "+tranID);
+            Log.d("paymentType", "paymentType: "+paymentType);
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject item = items.getJSONObject(i);
+                String itemName = item.getString("title");
+                String itemDesc = item.getString("desc");
+                String quantity = item.getString("quantity");// Retrieve description field
+                String itemPrice = item.getString("price");
+                Log.d("item", "itemName: "+itemName);
+                Log.d("itemDesc", "itemDesc: "+itemDesc);
+                Log.d("itemPrice", "itemPrice: "+itemPrice);
+                Log.d("quantity", "quantity: "+quantity);
+            }
+            Log.d("payment", "payment: "+payment);
             int numberOfDisplays = displays.length;
             showToast(context,"Number of Displays Detected: " + numberOfDisplays);
 
@@ -870,7 +896,8 @@ public class printPlugin extends Plugin {
                     showToast(context,"Main Screen: " + displayName+ displayId);
                 } else if (displayId == 1 || displayId == 6) {
                     showToast(context,"Auxiliary Screen: " + displayName + displayId);
-                    SecondaryScreen presentation = new SecondaryScreen(getContext(), display,printPayload);
+                    //TODO  printPayload testing
+                    SecondaryScreen presentation = new SecondaryScreen(getContext(), display,content);
                     presentation.show();
                 }
             }
@@ -880,7 +907,6 @@ public class printPlugin extends Plugin {
             Log.d("MenuItemClicked", "Error detecting displays:  " + e.getMessage());
         }
     }
-
     @PluginMethod
     public void testPluginMethod(PluginCall call) {
 //        String value = call.getString("msg");
