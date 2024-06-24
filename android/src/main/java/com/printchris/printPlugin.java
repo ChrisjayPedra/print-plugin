@@ -2,9 +2,11 @@ package com.printchris;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Presentation;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -13,6 +15,7 @@ import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Display;
@@ -57,6 +60,7 @@ public class printPlugin extends Plugin {
 
     private static final int RequestCode_RequestAllPermissions = 1;
     private static final int REQUEST_ENABLE_BT = 2;
+    private static final int REQUEST_ENABLE_LOCATION = 2;
     private static final int MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE = 1001;
     private Pointer h = Pointer.NULL;
     String strBT2Address = "";
@@ -1517,13 +1521,37 @@ public class printPlugin extends Plugin {
     }
     public void enableLocation() {
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        if (null != locationManager) {
+        if (locationManager != null) {
             boolean gpsLocation = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             boolean networkLocation = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (!gpsLocation && !networkLocation) {
-                Toast.makeText(getContext(), "Please enable location else will not search ble printer", Toast.LENGTH_SHORT).show();
-                Log.d("Failed", "Please enable location else will not search ble printer");
+
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Please enable location else will not search BLE printer")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                Intent enableBtIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_LOCATION);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                dialog.cancel();
+                            }
+                        });
+                final AlertDialog alert = builder.create();
+                alert.show();
+
+                Toast.makeText(getContext(), "Please enable location else will not search BLE printer", Toast.LENGTH_SHORT).show();
+                Log.d("Failed", "Please enable location else will not search BLE printer");
+
+                // Open location settings
+
+
             }
         }
     }
+
 }
