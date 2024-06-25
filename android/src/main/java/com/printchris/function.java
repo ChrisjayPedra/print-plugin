@@ -102,6 +102,7 @@ public class function {
             String date = content.getString("date");
             String tranID = content.getString("tranID");
             String paymentType = content.getString("paymentType");
+            String barcode = content.getString("barcode");
 
             Log.d("payment", "payment: "+payment);
             Log.d("change", "change: "+change);
@@ -111,7 +112,7 @@ public class function {
             Log.d("date", "date: "+date);
             Log.d("tranID", "tranID: "+tranID);
             Log.d("paymentType", "paymentType: " + paymentType);
-
+            Log.d("barcode", "barcode: " + barcode);
             AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
@@ -183,7 +184,7 @@ public class function {
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, "12345678901");
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, barcode);
 
             AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
             Test_Pos_QueryPrintResult(h);
