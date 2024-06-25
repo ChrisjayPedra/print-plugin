@@ -58,9 +58,28 @@ import java.util.Date;
 @CapacitorPlugin(name = "printPlugin")
 public class printPlugin extends Plugin {
 
+
+    private static final String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    private static final String[] PERMISSIONS_LOCATION = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.BLUETOOTH_PRIVILEGED
+    };
+
+    private static final int REQUEST_CODE_STORAGE = 1;
+    private static final int REQUEST_CODE_LOCATION = 2;
+    private static final int REQUEST_CODE_BLUETOOTH_CONNECT = 3;
+
+
     private static final int RequestCode_RequestAllPermissions = 1;
     private static final int REQUEST_ENABLE_BT = 2;
-    private static final int REQUEST_ENABLE_LOCATION = 2;
     private static final int MY_BLUETOOTH_PERMISSIONS_REQUEST_CODE = 1001;
     private Pointer h = Pointer.NULL;
     String strBT2Address = "";
@@ -923,14 +942,17 @@ public class printPlugin extends Plugin {
     public void enableServices(PluginCall call) {
         JSObject ret = new JSObject();
         try{
-            enableBluetooth();
+            checkPermissions();
+//            if (hasAllPermissions()) {
+//              enableBluetooth();
             enableWiFi();
             enableLocation();
-            if (hasAllPermissions()) {
-
-            } else {
-                requestAllPermissions(call);
-            }
+//            } else {
+//                requestAllPermissions(call);
+//                enableBluetooth();
+//                enableWiFi();
+//                enableLocation();
+//            }
             call.resolve(ret.put("enableServices", "Success"));
         }catch (Exception e){
             e.printStackTrace();
@@ -1303,24 +1325,24 @@ public class printPlugin extends Plugin {
                                             error_status_string += "[ERROR_CUTTER]";
                                             Toast.makeText(getContext(), error_status_string += "[ERROR_CUTTER]", Toast.LENGTH_SHORT).show();
                                         }
-                                          if (status.ERROR_FLASH()){
-                                              error_status_string += "[ERROR_FLASH]";
+                                        if (status.ERROR_FLASH()){
+                                            error_status_string += "[ERROR_FLASH]";
 
-                                              Toast.makeText(getContext(),error_status_string += "[ERROR_FLASH]", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_FLASH]", Toast.LENGTH_SHORT).show();
 
-                                          }
+                                        }
                                         if (status.ERROR_NOPAPER()){
                                             error_status_string += "[ERROR_NOPAPER]";
 
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_NOPAPER]", Toast.LENGTH_SHORT).show();
 
                                         }
-                                         if (status.ERROR_VOLTAGE()){
-                                             error_status_string += "[ERROR_VOLTAGE]";
+                                        if (status.ERROR_VOLTAGE()){
+                                            error_status_string += "[ERROR_VOLTAGE]";
 
-                                             Toast.makeText(getContext(),error_status_string += "[ERROR_VOLTAGE]", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_VOLTAGE]", Toast.LENGTH_SHORT).show();
 
-                                         }
+                                        }
                                         if (status.ERROR_MARKER()){
                                             error_status_string += "[ERROR_MARKER]";
 
@@ -1339,12 +1361,12 @@ public class printPlugin extends Plugin {
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_MOVEMENT]", Toast.LENGTH_SHORT).show();
 
                                         }
-                                         if (status.ERROR_COVERUP()){
-                                             error_status_string += "[ERROR_COVERUP]";
+                                        if (status.ERROR_COVERUP()){
+                                            error_status_string += "[ERROR_COVERUP]";
 
-                                             Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
 
-                                         }
+                                        }
                                         if (status.ERROR_MOTOR()){
                                             Toast.makeText(getContext(),error_status_string += "[ERROR_COVERUP]", Toast.LENGTH_SHORT).show();
 
@@ -1409,20 +1431,20 @@ public class printPlugin extends Plugin {
         }
     };
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case RequestCode_RequestAllPermissions:
-                if (hasAllPermissions()) {
-                } else {
-                    Log.d("onPermissionGranted", "onRequestPermissionsResult: ");
-                    Toast.makeText(getContext(),"onRequestPermissionsResult", Toast.LENGTH_SHORT).show();
-
-                }
-                Log.d("finish", "onRequestPermissionsResult: ");
-                break;
-        }
-    }
+    //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+////        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case RequestCode_RequestAllPermissions:
+//                if (hasAllPermissions()) {
+//                } else {
+//                    Log.d("onPermissionGranted", "onRequestPermissionsResult: ");
+//                    Toast.makeText(getContext(),"onRequestPermissionsResult", Toast.LENGTH_SHORT).show();
+//
+//                }
+//                Log.d("finish", "onRequestPermissionsResult: ");
+//                break;
+//        }
+//    }
     public boolean hasAllPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean hasLocationPermission =
@@ -1533,6 +1555,7 @@ public class printPlugin extends Plugin {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(final DialogInterface dialog, final int id) {
                                 Intent enableBtIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                int REQUEST_ENABLE_LOCATION=1;
                                 getActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_LOCATION);
                             }
                         })
@@ -1551,6 +1574,66 @@ public class printPlugin extends Plugin {
 
 
             }
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_STORAGE:
+                // Handle storage permissions result
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                } else {
+                    // Permission denied
+                }
+                break;
+            case REQUEST_CODE_LOCATION:
+                // Handle location permissions result
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                } else {
+                    // Permission denied
+                }
+                break;
+            case REQUEST_CODE_BLUETOOTH_CONNECT:
+                // Handle Bluetooth connect permission result
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                } else {
+                    // Permission denied
+                }
+                break;
+        }
+    }
+
+
+    private void checkPermissions() {
+        Context context = getContext();
+        Activity activity = getActivity();
+
+        int permissionStorage = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permissionBluetoothScan = ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_SCAN);
+        int permissionBluetoothConnect = ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT);
+
+        if (permissionStorage != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_CODE_STORAGE
+            );
+        } else if (permissionBluetoothScan != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_LOCATION,
+                    REQUEST_CODE_LOCATION
+            );
+        } else if (permissionBluetoothConnect != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    new String[]{Manifest.permission.BLUETOOTH_CONNECT},
+                    REQUEST_CODE_BLUETOOTH_CONNECT
+            );
         }
     }
 
