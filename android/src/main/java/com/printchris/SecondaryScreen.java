@@ -1,6 +1,7 @@
 package com.printchris;
 
 
+import android.annotation.SuppressLint;
 import android.app.Presentation;
 import android.content.ClipData;
 import android.content.Context;
@@ -29,6 +30,7 @@ public class SecondaryScreen extends Presentation {
     }
 
     ListView listView;
+    @SuppressLint("DefaultLocale")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,34 +56,51 @@ public class SecondaryScreen extends Presentation {
                 double tax = content.getDouble("tax");
                 double itemSubtotal = content.getDouble("itemSubtotal");
                 double totalAmount = content.getDouble("totalAmount");
+
+// Extracting string values from JSON
                 String date = content.getString("date");
                 String tranID = content.getString("tranID");
                 String paymentType = content.getString("paymentType");
-                Log.d("payment", "payment: "+payment);
-                Log.d("change", "change: "+change);
-                Log.d("tax", "tax: "+tax);
-                Log.d("itemSubtotal", "itemSubtotal: "+itemSubtotal);
-                Log.d("totalAmount", "totalAmount: "+totalAmount);
-                Log.d("date", "date: "+date);
-                Log.d("tranID", "tranID: "+tranID);
-                Log.d("paymentType", "paymentType: "+paymentType);
+                String barcode = content.getString("barcode");
+
+// Logging extracted values
+                Log.d("payment", "payment: " + payment);
+                Log.d("change", "change: " + change);
+                Log.d("tax", "tax: " + tax);
+                Log.d("itemSubtotal", "itemSubtotal: " + itemSubtotal);
+                Log.d("totalAmount", "totalAmount: " + totalAmount);
+                Log.d("date", "date: " + date);
+                Log.d("tranID", "tranID: " + tranID);
+                Log.d("paymentType", "paymentType: " + paymentType);
+                Log.d("barcode", "barcode: " + barcode);
+
                 for (int i = 0; i < items.length(); i++) {
                     JSONObject item = items.getJSONObject(i);
                     String itemName = item.getString("title");
-                    String itemDesc = item.getString("Desc"); // Retrieve description field
-                    String itemPrice = item.getString("Price");
                     String quantity = item.getString("quantity");
-                    Log.d("item", "itemName: "+itemName);
-                    Log.d("itemDesc", "itemDesc: "+itemDesc);
-                    Log.d("itemPrice", "itemPrice: "+itemPrice);
-                    Log.d("quantity", "quantity: "+quantity);
-                    item _item = new item(itemName, itemDesc,itemPrice,quantity); // Create an Item object
+                    String itemDesc = item.getString("desc"); // Assuming the correct key is "desc"
+                    double itemPrice = item.getDouble("regular_price");
+                    String productCode = item.getString("product_code");
+                    String categoryId = item.getString("category_id");
+
+                    // Logging item details
+                    Log.d("product_code", "product_code: " + productCode);
+                    Log.d("category_id", "category_id: " + categoryId);
+                    Log.d("item", "itemName: " + itemName);
+                    Log.d("quantity", "quantity: " + quantity);
+                    Log.d("itemPrice", "itemPrice: " + itemPrice);
+
+                    // Create an Item object and add it to the list
+                    item _item = new item(itemName, itemDesc, itemPrice, quantity);
                     itemList.add(_item);
                 }
-                _payment.setText((int) payment);
-                _change.setText((int)change);
-                _total.setText((int)totalAmount);
+
+// Set text values for TextViews
+                _payment.setText(String.format("$%.2f", payment));
+                _change.setText(String.format("$%.2f", change));
+                _total.setText(String.format("$%.2f", totalAmount));
                 _paymentType.setText(paymentType);
+
                 CustomBaseAdapter customBaseAdapter = new CustomBaseAdapter(getContext().getApplicationContext(),itemList);
                 listView.setAdapter((customBaseAdapter));
 

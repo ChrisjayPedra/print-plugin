@@ -94,25 +94,32 @@ public class function {
         try {
             int paperWidth = 384;
             JSONObject content = data.getJSONObject("content");
+
+// Extracting double values from JSON
             double payment = content.getDouble("payment");
             double change = content.getDouble("change");
             double tax = content.getDouble("tax");
             double itemSubtotal = content.getDouble("itemSubtotal");
             double totalAmount = content.getDouble("totalAmount");
+
+// Extracting string values from JSON
             String date = content.getString("date");
             String tranID = content.getString("tranID");
             String paymentType = content.getString("paymentType");
             String barcode = content.getString("barcode");
 
-            Log.d("payment", "payment: "+payment);
-            Log.d("change", "change: "+change);
-            Log.d("tax", "tax: "+tax);
-            Log.d("itemSubtotal", "itemSubtotal: "+itemSubtotal);
-            Log.d("totalAmount", "totalAmount: "+totalAmount);
-            Log.d("date", "date: "+date);
-            Log.d("tranID", "tranID: "+tranID);
+// Logging extracted values
+            Log.d("payment", "payment: " + payment);
+            Log.d("change", "change: " + change);
+            Log.d("tax", "tax: " + tax);
+            Log.d("itemSubtotal", "itemSubtotal: " + itemSubtotal);
+            Log.d("totalAmount", "totalAmount: " + totalAmount);
+            Log.d("date", "date: " + date);
+            Log.d("tranID", "tranID: " + tranID);
             Log.d("paymentType", "paymentType: " + paymentType);
             Log.d("barcode", "barcode: " + barcode);
+
+// Printer setup and printing
             AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
@@ -123,20 +130,25 @@ public class function {
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, date);
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
 
-            // Print items dynamically
-
-
+// Print items dynamically
             JSONArray items = content.getJSONArray("item");
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
                 String itemName = item.getString("title");
                 String quantity = item.getString("quantity");
-                String itemDesc = item.getString("desc"); // Corrected key to match JSON
-                double itemPrice = item.getDouble("price"); // Assuming price is a string in JSON, convert to double
+                String itemDesc = item.getString("desc"); // Assuming the correct key is "desc"
+                double itemPrice = item.getDouble("regular_price");
+                String productCode = item.getString("product_code");
+                String categoryId = item.getString("category_id");
+
+                // Logging item details
+                Log.d("product_code", "product_code: " + productCode);
+                Log.d("category_id", "category_id: " + categoryId);
                 Log.d("item", "itemName: " + itemName);
                 Log.d("quantity", "quantity: " + quantity);
                 Log.d("itemPrice", "itemPrice: " + itemPrice);
 
+                // Printing item details
                 AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
                 AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemName);
                 AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemDesc);
@@ -144,8 +156,8 @@ public class function {
                 AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", itemPrice));
             }
 
-
-// Printing subtotal (itemSubtotal)
+// Printing subtotal
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Subtotal:\r\n");
             AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", itemSubtotal) + "\r\n");
@@ -180,15 +192,16 @@ public class function {
             AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, paymentType + "\r\n");
 
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
-            AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, barcode);
+// Printing barcode
+//          AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+//          AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
+//          AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 3);
+//          AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextPosition(h, AutoReplyPrint.CP_Pos_BarcodeTextPrintPosition_BelowBarcode);
+//          AutoReplyPrint.INSTANCE.CP_Pos_PrintBarcode(h, AutoReplyPrint.CP_Pos_BarcodeType_UPCA, barcode);
 
+// Beep and query print result
             AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
             Test_Pos_QueryPrintResult(h);
-
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Error_Test_Costom", "Test_Costom_Ticket_Receipt: " + e.getMessage());

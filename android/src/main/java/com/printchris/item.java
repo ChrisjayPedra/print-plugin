@@ -3,10 +3,10 @@ package com.printchris;
 public class item {
     private String name;
     private String description;
-    private String price;
+    private Double price;
     private String quantity;
 
-    public item(String name, String description, String price,String quantity) {
+    public item(String name, String description, double price, String quantity) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -21,7 +21,7 @@ public class item {
         return description;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
     public String getQuantity() {

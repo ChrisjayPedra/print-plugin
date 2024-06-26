@@ -885,27 +885,38 @@ public class printPlugin extends Plugin {
             double tax = content.getDouble("tax");
             double itemSubtotal = content.getDouble("itemSubtotal");
             double totalAmount = content.getDouble("totalAmount");
+
+// Extracting string values from JSON
             String date = content.getString("date");
             String tranID = content.getString("tranID");
             String paymentType = content.getString("paymentType");
-            Log.d("payment", "payment: "+payment);
-            Log.d("change", "change: "+change);
-            Log.d("tax", "tax: "+tax);
-            Log.d("itemSubtotal", "itemSubtotal: "+itemSubtotal);
-            Log.d("totalAmount", "totalAmount: "+totalAmount);
-            Log.d("date", "date: "+date);
-            Log.d("tranID", "tranID: "+tranID);
-            Log.d("paymentType", "paymentType: "+paymentType);
+            String barcode = content.getString("barcode");
+
+// Logging extracted values
+            Log.d("payment", "payment: " + payment);
+            Log.d("change", "change: " + change);
+            Log.d("tax", "tax: " + tax);
+            Log.d("itemSubtotal", "itemSubtotal: " + itemSubtotal);
+            Log.d("totalAmount", "totalAmount: " + totalAmount);
+            Log.d("date", "date: " + date);
+            Log.d("tranID", "tranID: " + tranID);
+            Log.d("paymentType", "paymentType: " + paymentType);
+            Log.d("barcode", "barcode: " + barcode);
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
                 String itemName = item.getString("title");
-                String itemDesc = item.getString("desc");
-                String quantity = item.getString("quantity");// Retrieve description field
-                String itemPrice = item.getString("price");
-                Log.d("item", "itemName: "+itemName);
-                Log.d("itemDesc", "itemDesc: "+itemDesc);
-                Log.d("itemPrice", "itemPrice: "+itemPrice);
-                Log.d("quantity", "quantity: "+quantity);
+                String quantity = item.getString("quantity");
+                String itemDesc = item.getString("desc"); // Assuming the correct key is "desc"
+                double itemPrice = item.getDouble("regular_price");
+                String productCode = item.getString("product_code");
+                String categoryId = item.getString("category_id");
+
+                // Logging item details
+                Log.d("product_code", "product_code: " + productCode);
+                Log.d("category_id", "category_id: " + categoryId);
+                Log.d("item", "itemName: " + itemName);
+                Log.d("quantity", "quantity: " + quantity);
+                Log.d("itemPrice", "itemPrice: " + itemPrice);
             }
             Log.d("payment", "payment: "+payment);
             int numberOfDisplays = displays.length;

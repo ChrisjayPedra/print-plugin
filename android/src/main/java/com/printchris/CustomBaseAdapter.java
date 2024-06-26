@@ -57,7 +57,7 @@ public class CustomBaseAdapter extends BaseAdapter {
         item currentItem = itemList.get(position);
 
         holder.textName.setText(currentItem.getName());
-        holder.textPrice.setText(currentItem.getPrice());
+        holder.textPrice.setText(String.valueOf((double) currentItem.getPrice()));
         holder.textDesc.setText(currentItem.getDescription());
         holder.textQuantity.setText(currentItem.getQuantity());
         return view;
