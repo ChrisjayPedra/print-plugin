@@ -1,9 +1,7 @@
 package com.printchris;
 
-
 import android.annotation.SuppressLint;
 import android.app.Presentation;
-import android.content.ClipData;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +28,7 @@ public class SecondaryScreen extends Presentation {
     }
 
     ListView listView;
-    @SuppressLint("DefaultLocale")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,31 +37,29 @@ public class SecondaryScreen extends Presentation {
         View view = inflater.inflate(R.layout.differentdisplay_basket, null);
         setContentView(view);
 
-
         listView = (ListView) findViewById(R.id.CustomListView);
         TextView _payment = findViewById(R.id.payment);
-        TextView _paymentType = findViewById(R.id.paymentType);
-        TextView _change = findViewById(R.id.change);
-        TextView _total = findViewById(R.id.total);
-        if (data != null) {
-            try {
 
-                List<item> itemList = new ArrayList<>();
-                JSONObject content = data.getJSONObject("content");
-                JSONArray items = content.getJSONArray("item");
-                double payment = content.getDouble("payment");
-                double change = content.getDouble("change");
-                double tax = content.getDouble("tax");
-                double itemSubtotal = content.getDouble("itemSubtotal");
-                double totalAmount = content.getDouble("totalAmount");
+        if (data != null && data.length() != 0) {
+            Log.d("onCreate", "onCreate: " + data);
+            List<item> itemList = new ArrayList<>();
+            JSONObject content = data.optJSONObject("content");
 
-// Extracting string values from JSON
-                String date = content.getString("date");
-                String tranID = content.getString("tranID");
-                String paymentType = content.getString("paymentType");
-                String barcode = content.getString("barcode");
+            if (content != null) {
+                JSONArray items = content.optJSONArray("item");
+                double payment = content.optDouble("payment", 0.0);
+                double change = content.optDouble("change", 0.0);
+                double tax = content.optDouble("tax", 0.0);
+                double itemSubtotal = content.optDouble("itemSubtotal", 0.0);
+                double totalAmount = content.optDouble("totalAmount", 0.0);
 
-// Logging extracted values
+                // Extracting string values from JSON
+                String date = content.optString("date", "N/A");
+                String tranID = content.optString("tranID", "N/A");
+                String paymentType = content.optString("paymentType", "N/A");
+                String barcode = content.optString("barcode", "N/A");
+
+                // Logging extracted values
                 Log.d("payment", "payment: " + payment);
                 Log.d("change", "change: " + change);
                 Log.d("tax", "tax: " + tax);
@@ -74,39 +70,47 @@ public class SecondaryScreen extends Presentation {
                 Log.d("paymentType", "paymentType: " + paymentType);
                 Log.d("barcode", "barcode: " + barcode);
 
-                for (int i = 0; i < items.length(); i++) {
-                    JSONObject item = items.getJSONObject(i);
-                    String itemName = item.getString("title");
-                    String quantity = item.getString("quantity");
-                    String itemDesc = item.getString("desc"); // Assuming the correct key is "desc"
-                    double itemPrice = item.getDouble("regular_price");
-                    String productCode = item.getString("product_code");
-                    String categoryId = item.getString("category_id");
+                if (items != null) {
+                    for (int i = 0; i < items.length(); i++) {
+                        JSONObject item = items.optJSONObject(i);
+                        if (item != null) {
+                            String itemName = item.optString("title", "Unknown Item");
+                            String quantity = item.optString("quantity", "0");
+                            String itemDesc = item.optString("desc", "No Description");
+                            double itemPrice = item.optDouble("regular_price", 0.0);
+                            String productCode = item.optString("product_code", "N/A");
+                            String categoryId = item.optString("category_id", "N/A");
 
-                    // Logging item details
-                    Log.d("product_code", "product_code: " + productCode);
-                    Log.d("category_id", "category_id: " + categoryId);
-                    Log.d("item", "itemName: " + itemName);
-                    Log.d("quantity", "quantity: " + quantity);
-                    Log.d("itemPrice", "itemPrice: " + itemPrice);
+                            // Logging item details
+                            Log.d("product_code", "product_code: " + productCode);
+                            Log.d("category_id", "category_id: " + categoryId);
+                            Log.d("item", "itemName: " + itemName);
+                            Log.d("quantity", "quantity: " + quantity);
+                            Log.d("itemPrice", "itemPrice: " + itemPrice);
 
-                    // Create an Item object and add it to the list
-                    item _item = new item(itemName, itemDesc, itemPrice, quantity);
-                    itemList.add(_item);
+                            // Create an Item object and add it to the list
+                            item _item = new item(itemName, itemDesc, itemPrice, quantity);
+                            itemList.add(_item);
+                        }
+                    }
                 }
 
-// Set text values for TextViews
-                _payment.setText(String.format("$%.2f", payment));
-                _change.setText(String.format("$%.2f", change));
-                _total.setText(String.format("$%.2f", totalAmount));
-                _paymentType.setText(paymentType);
+                // Set text values for TextViews
+                _payment.setText(String.format("$%.2f", totalAmount));
 
-                CustomBaseAdapter customBaseAdapter = new CustomBaseAdapter(getContext().getApplicationContext(),itemList);
-                listView.setAdapter((customBaseAdapter));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else {
+                // Handle case where content is null
+                Log.d("onCreate", "Content JSONObject is null.");
+                _payment.setText("$0.00");
             }
+
+            CustomBaseAdapter customBaseAdapter = new CustomBaseAdapter(getContext().getApplicationContext(), itemList);
+            listView.setAdapter(customBaseAdapter);
+
+        } else {
+            // Handle case where data is null or empty
+            Log.d("onCreate", "Data JSONObject is null or empty.");
+            _payment.setText("$0.00");
         }
     }
 }

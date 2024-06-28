@@ -23,9 +23,11 @@ public class function {
 
     private Activity activity;
     private JSONObject data;
+
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
+
     public void Test_Pos_SampleTicket_80MM_1(Pointer h) {
         Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_80MM_1: ");
         try {
@@ -88,10 +90,33 @@ public class function {
             Log.d("TestFuntion", "TestFuntion: " + e.getMessage());
         }
     }
+
     public void Test_Custom_Ticket_Receipt(Pointer h, JSONObject data) {
         Log.d("Test_Costom_Ticket", "Test_Costom_Ticket_Receipt: " + data);
 
         try {
+            AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetPrintSpeed(h, 50);
+            Bitmap bitmap = TestUtils.getImageFromAssetsFile(activity, "RasterImage/bell-logo.png");
+            if (bitmap == null || bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
+                return;
+            }
+
+            int printwidth = 300;
+            IntByReference width_mm = new IntByReference();
+            IntByReference height_mm = new IntByReference();
+            IntByReference dots_per_mm = new IntByReference();
+            if (AutoReplyPrint.INSTANCE.CP_Printer_GetPrinterResolutionInfo(h, width_mm, height_mm, dots_per_mm)) {
+                printwidth = width_mm.getValue() * dots_per_mm.getValue();
+            }
+            bitmap = TestUtils.scaleImageToWidth(bitmap, printwidth);
+
+            AutoReplyPrint.CP_Pos_PrintRasterImageFromData_Helper.PrintRasterImageFromBitmap(
+                    h, bitmap.getWidth(), bitmap.getHeight(), bitmap,
+                    AutoReplyPrint.CP_ImageBinarizationMethod_ErrorDiffusion,
+                    AutoReplyPrint.CP_ImageCompressionMethod_None);
+
+
             int paperWidth = 384;
             JSONObject content = data.getJSONObject("content");
 
@@ -120,15 +145,17 @@ public class function {
             Log.d("barcode", "barcode: " + barcode);
 
 // Printer setup and printing
-            AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
+
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Bell POS\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, tranID);
             AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_HCenter);
+//      AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Bell POS\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, tranID + "\r\n");
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, date);
+            AutoReplyPrint.INSTANCE.CP_Label_DrawLine(h, 10, 10, 374, 10, 2, 1);
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+
 
 // Print items dynamically
             JSONArray items = content.getJSONArray("item");
@@ -150,47 +177,75 @@ public class function {
 
                 // Printing item details
                 AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+                AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
                 AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemName);
-                AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, itemDesc);
-                AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+                AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "x" + quantity);
+                AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
                 AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", itemPrice));
             }
 
 // Printing subtotal
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Subtotal:\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextBold(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextScale(h, 1,1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Subtotal:");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 10 * 6);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", itemSubtotal) + "\r\n");
-
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextBold(h, 0);
+            AutoReplyPrint.INSTANCE.CP_Label_DrawLine(h, 10, 10, 374, 10, 2, 1);
 // Printing tax
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Tax:\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Tax:");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 10 * 6);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", tax) + "\r\n");
+            AutoReplyPrint.INSTANCE.CP_Label_DrawLine(h, 10, 10, 374, 10, 2, 1);
 
 // Printing total amount
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Total Amount:\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextBold(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Total Amount:");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 10 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", totalAmount) + "\r\n");
-
-// Printing payment
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Payment:\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", payment) + "\r\n");
-
-// Printing change
-            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Change:\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", change) + "\r\n");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetTextBold(h, 0);
+            AutoReplyPrint.INSTANCE.CP_Label_DrawLine(h, 10, 10, 374, 10, 2, 1);
 
 // Printing payment type
             AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
-            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Payment Type:\r\n");
-            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 12 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Payment Type:");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 10 * 6);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, paymentType + "\r\n");
+
+// Printing payment
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Payment:");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 10 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", payment) + "\r\n");
+            AutoReplyPrint.INSTANCE.CP_Label_DrawLine(h, 10, 10, 374, 10, 2, 1);
+// Printing change
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Change:");
+            AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 10 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, String.format("$%.2f", change) + "\r\n");
+            AutoReplyPrint.INSTANCE.CP_Label_DrawLine(h, 10, 10, 374, 10, 2, 1);
+            AutoReplyPrint.INSTANCE.CP_Label_DrawLine(h, 10, 10, 374, 10, 2, 1);
+
+//Greetings
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, AutoReplyPrint.CP_Pos_Alignment_HCenter);
+            AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, paperWidth - 10 * 6);
+            AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Thank you");
 
 // Printing barcode
 //          AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 1);
@@ -201,14 +256,16 @@ public class function {
 
 // Beep and query print result
             AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 1, 500);
+            AutoReplyPrint.INSTANCE.CP_Pos_FeedAndHalfCutPaper(h);
             Test_Pos_QueryPrintResult(h);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("Error_Test_Costom", "Test_Costom_Ticket_Receipt: " + e.getMessage());
         }
     }
+
     public void Test_Pos_SampleTicket_80MM_2(Pointer h) {
-        try{
+        try {
             {
                 AutoReplyPrint.INSTANCE.CP_Printer_ClearPrinterBuffer(h);
                 AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
@@ -283,17 +340,17 @@ public class function {
                 Test_Pos_QueryPrintResult(h);
             }
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_SampleTicket_80MM_2: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_SampleTicket_80MM_2: " + e.getMessage());
 
         }
 
 
     }
-    public void  Test_Pos_SampleTicket_58MM_1(Pointer h) {
-        try{
+
+    public void Test_Pos_SampleTicket_58MM_1(Pointer h) {
+        try {
             int paperWidth = 384;
 
             AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
@@ -371,13 +428,14 @@ public class function {
             }
             Log.d("TestPosTicket58MM1", "Test_Pos_SampleTicket_58MM_1: try ");
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("TestPosTicket58MM1", "Test_Pos_SampleTicket_58MM_1:  catch"+e.getMessage());
+            Log.d("TestPosTicket58MM1", "Test_Pos_SampleTicket_58MM_1:  catch" + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_SampleTicket_58MM_2(Pointer h) {
         Log.d("Test_Pos_SampleTicket", "Test_Pos_SampleTicket_58MM_2: ");
         Bitmap bitmap = TestUtils.getPrintBitmap(activity, 384, 400);
@@ -386,24 +444,26 @@ public class function {
             Test_Pos_QueryPrintResult(h);
         }
     }
+
     public void Test_Pos_PrintSelfTestPage(Pointer h) {
-        try{
+        try {
             boolean result = AutoReplyPrint.INSTANCE.CP_Pos_PrintSelfTestPage(h);
-            if (!result){
+            if (!result) {
                 TestUtils.showMessageOnUiThread(activity, "Write failed");
                 Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage: Write failed");
             }
             Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage: catch"+e.getMessage());
+            Log.d("PrintSelfTestPage", "Test_Pos_PrintSelfTestPage: catch" + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_PrintBarcode(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 2);
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeHeight(h, 60);
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeReadableTextFontType(h, 0);
@@ -425,15 +485,16 @@ public class function {
             Log.d("Try", "Test_Pos_PrintBarcode: ");
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_PrintBarcode: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_PrintBarcode: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_PrintQRCode(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Pos_SetBarcodeUnitWidth(h, 8);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintQRCode(h, 0, AutoReplyPrint.CP_QRCodeECC_L, "Hello 欢迎使用");
 
@@ -443,16 +504,17 @@ public class function {
 
             Log.d("Try", "Test_Pos_PrintQRCode: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_PrintQRCode: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_PrintQRCode: " + e.getMessage());
 
         }
 
 
     }
-    public void  Test_Port_Read(Pointer h) {
-        try{
+
+    public void Test_Port_Read(Pointer h) {
+        try {
             // send this cmd to query printer status
             byte cmd[] = {0x10, 0x04, 0x01};
             AutoReplyPrint.INSTANCE.CP_Port_SkipAvailable(h);
@@ -460,7 +522,7 @@ public class function {
                 byte status[] = new byte[1];
                 if (AutoReplyPrint.INSTANCE.CP_Port_Read(h, status, 1, 2000) == 1) {
                     TestUtils.showMessageOnUiThread(activity, String.format("Status 0x%02X", status[0] & 0xff));
-                    Log.d("Test_Port_Read", "Test_Port_Read:  try"+String.format("Status 0x%02X", status[0] & 0xff));
+                    Log.d("Test_Port_Read", "Test_Port_Read:  try" + String.format("Status 0x%02X", status[0] & 0xff));
                 } else {
                     TestUtils.showMessageOnUiThread(activity, "Read failed");
                     Test_Pos_QueryPrintResult(h);
@@ -470,66 +532,70 @@ public class function {
             }
             Log.d("Test_Port_Read", "Test_Port_Read:  try");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Test_Port_Read", "Test_Port_Read: Catch"+e.getMessage());
+            Log.d("Test_Port_Read", "Test_Port_Read: Catch" + e.getMessage());
 
         }
 
 
     }
+
     public void Test_Port_Write(Pointer h) {
-        try{
+        try {
             byte cmd[] = {0x12, 0x54};
             if (AutoReplyPrint.INSTANCE.CP_Port_Write(h, cmd, cmd.length, 1000) != cmd.length)
                 TestUtils.showMessageOnUiThread(activity, "Write failed");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Port_Write: "+e.getMessage());
+            Log.d("Catch", "Test_Port_Write: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_MultipleLanguages_CompressNone(Pointer h) {
-        try{
+        try {
             Bitmap bitmap = TestUtils.getMultipleLanguagesSampleBitmap(activity, 384);
             AutoReplyPrint.CP_Pos_PrintRasterImageFromData_Helper.PrintRasterImageFromBitmap(h, bitmap.getWidth(), bitmap.getHeight(), bitmap, AutoReplyPrint.CP_ImageBinarizationMethod_Thresholding, AutoReplyPrint.CP_ImageCompressionMethod_None);
             Log.d("try", "Test_Pos_MultipleLanguages_CompressNone: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("catch", "Test_Pos_MultipleLanguages_CompressNone: "+e.getMessage());
+            Log.d("catch", "Test_Pos_MultipleLanguages_CompressNone: " + e.getMessage());
 
         }
     }
+
     public void Test_Pos_MultipleLanguages_CompressLevel1(Pointer h) {
-        try{
+        try {
             Bitmap bitmap = TestUtils.getMultipleLanguagesSampleBitmap(activity, 384);
             AutoReplyPrint.CP_Pos_PrintRasterImageFromData_Helper.PrintRasterImageFromBitmap(h, bitmap.getWidth(), bitmap.getHeight(), bitmap, AutoReplyPrint.CP_ImageBinarizationMethod_Thresholding, AutoReplyPrint.CP_ImageCompressionMethod_Level1);
             Log.d("try", "Test_Pos_MultipleLanguages_CompressLevel1: ");
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("catch", "Test_Pos_MultipleLanguages_CompressLevel1:"+e.getMessage());
+            Log.d("catch", "Test_Pos_MultipleLanguages_CompressLevel1:" + e.getMessage());
 
         }
     }
+
     public void Test_Pos_MultipleLanguages_CompressLevel2(Pointer h) {
-        try{
+        try {
             Bitmap bitmap = TestUtils.getMultipleLanguagesSampleBitmap(activity, 384);
             AutoReplyPrint.CP_Pos_PrintRasterImageFromData_Helper.PrintRasterImageFromBitmap(h, bitmap.getWidth(), bitmap.getHeight(), bitmap, AutoReplyPrint.CP_ImageBinarizationMethod_Thresholding, AutoReplyPrint.CP_ImageCompressionMethod_Level2);
             Log.d("try", "Test_Pos_MultipleLanguages_CompressLevel2: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("catch", "Test_Pos_MultipleLanguages_CompressLevel2: "+e.getMessage());
+            Log.d("catch", "Test_Pos_MultipleLanguages_CompressLevel2: " + e.getMessage());
 
         }
     }
+
     public void Test_Pos_SampleImage_1_CompressNone(Pointer h) {
-        try{
+        try {
             IntByReference width_mm = new IntByReference();
             IntByReference height_mm = new IntByReference();
             IntByReference dots_per_mm = new IntByReference();
@@ -559,15 +625,16 @@ public class function {
             }
             Log.d("try", "Test_Pos_SampleImage_1_CompressNone: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_SampleImage_1_CompressNone: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_SampleImage_1_CompressNone: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_SampleImage_1_CompressLevel1(Pointer h) {
-        try{
+        try {
             IntByReference width_mm = new IntByReference();
             IntByReference height_mm = new IntByReference();
             IntByReference dots_per_mm = new IntByReference();
@@ -597,15 +664,16 @@ public class function {
             }
             Log.d("try", "Test_Pos_SampleImage_1_CompressLevel1: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_SampleImage_1_CompressLevel1: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_SampleImage_1_CompressLevel1: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_SampleImage_1_CompressLevel2(Pointer h) {
-        try{
+        try {
             IntByReference width_mm = new IntByReference();
             IntByReference height_mm = new IntByReference();
             IntByReference dots_per_mm = new IntByReference();
@@ -635,16 +703,17 @@ public class function {
             }
             Log.d("try", "Test_Pos_SampleImage_1_CompressLevel2: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
 
-            Log.d("Catch", "Test_Pos_SampleImage_1_CompressLevel2: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_SampleImage_1_CompressLevel2: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_SampleImage_2_CompressLevel2(Pointer h) {
-        try{
+        try {
             IntByReference width_mm = new IntByReference();
             IntByReference height_mm = new IntByReference();
             IntByReference dots_per_mm = new IntByReference();
@@ -667,52 +736,56 @@ public class function {
             }
             Log.d("try", "Test_Pos_SampleImage_2_CompressLevel2: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_SampleImage_2_CompressLevel2: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_SampleImage_2_CompressLevel2: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Port_Available(Pointer h) {
-        try{
+        try {
             int available = AutoReplyPrint.INSTANCE.CP_Port_Available(h);
             TestUtils.showMessageOnUiThread(activity, "available " + available);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Port_Available: "+e.getMessage());
+            Log.d("Catch", "Test_Port_Available: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Port_SkipAvailable(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Port_SkipAvailable(h);
             Log.d("try", "Test_Port_SkipAvailable: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("catch", "Test_Port_SkipAvailable: "+e.getMessage());
+            Log.d("catch", "Test_Port_SkipAvailable: " + e.getMessage());
 
         }
 
     }
-    public void  Test_Port_IsConnectionValid(Pointer h) {
-        try{
+
+    public void Test_Port_IsConnectionValid(Pointer h) {
+        try {
             boolean valid = AutoReplyPrint.INSTANCE.CP_Port_IsConnectionValid(h);
             TestUtils.showMessageOnUiThread(activity, "valid " + valid);
             Log.d("try", "Test_Port_IsConnectionValid: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Port_IsConnectionValid: "+e.getMessage());
+            Log.d("Catch", "Test_Port_IsConnectionValid: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Printer_GetPrinterInfo(Pointer h) {
-        try{
+        try {
             String firmware_version = AutoReplyPrint.CP_Printer_GetPrinterFirmwareVersion_Helper.GetPrinterFirmwareVersion(h) + "\r\n";
             IntByReference width_mm = new IntByReference();
             IntByReference height_mm = new IntByReference();
@@ -741,54 +814,56 @@ public class function {
             }
             Log.d("try", "Test_Printer_GetPrinterInfo: ");
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("catch", "Test_Printer_GetPrinterInfo: "+e.getMessage());
+            Log.d("catch", "Test_Printer_GetPrinterInfo: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Printer_ClearPrinterBuffer(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Printer_ClearPrinterBuffer(h);
             Log.d("try", "Test_Printer_ClearPrinterBuffer: ");
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Log.d("Catch", "Test_Printer_ClearPrinterBuffer: ");
 
         }
 
     }
-    public void  Test_Printer_ClearPrinterError(Pointer h) {
-        try{
+
+    public void Test_Printer_ClearPrinterError(Pointer h) {
+        try {
             AutoReplyPrint.INSTANCE.CP_Printer_ClearPrinterError(h);
             Log.d("try", "Test_Printer_ClearPrinterError: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Printer_ClearPrinterError: "+e.getMessage());
+            Log.d("Catch", "Test_Printer_ClearPrinterError: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Proto_QueryBatteryLevel(Pointer h) {
-        try{
+        try {
             int batteryLevel = AutoReplyPrint.INSTANCE.CP_Proto_QueryBatteryLevel(h, 3000);
             TestUtils.showMessageOnUiThread(activity, "batteryLevel:" + batteryLevel);
             Log.d("try", "Test_Proto_QueryBatteryLevel: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Proto_QueryBatteryLevel: "+e.getMessage());
+            Log.d("Catch", "Test_Proto_QueryBatteryLevel: " + e.getMessage());
 
         }
 
     }
+
     public void Test_Pos_PrintQRCodeUseEpsonCmd(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Pos_PrintQRCodeUseEpsonCmd(h, 8, AutoReplyPrint.CP_QRCodeECC_L, "Hello 欢迎使用");
             boolean result = AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 3);
             if (!result)
@@ -796,31 +871,32 @@ public class function {
             Log.d("try", "Test_Pos_PrintQRCodeUseEpsonCmd: ");
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: " + e.getMessage());
         }
 
 
     }
+
     public void Test_Pos_PrintQRCodeUseImageCmd(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Pos_PrintQRCodeUseImageCmd(h, "Hello 欢迎使用", 0, 8, AutoReplyPrint.CP_QRCodeECC_L, AutoReplyPrint.CP_ImageCompressionMethod_None);
 
             boolean result = AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 3);
             if (!result)
                 TestUtils.showMessageOnUiThread(activity, "Write failed");
             Log.d("try", "Test_Pos_PrintQRCodeUseEpsonCmd: ");
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: " + e.getMessage());
         }
 
 
-
     }
+
     public void Test_Pos_PrintDoubleQRCode(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Pos_PrintDoubleQRCode(h, 4, 0, 4, AutoReplyPrint.CP_QRCodeECC_L, "hello", 200, 3, AutoReplyPrint.CP_QRCodeECC_L, "test");
 
             boolean result = AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 3);
@@ -828,16 +904,16 @@ public class function {
                 TestUtils.showMessageOnUiThread(activity, "Write failed");
             Log.d("try", "Test_Pos_PrintQRCodeUseEpsonCmd: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: " + e.getMessage());
         }
 
 
-
     }
+
     public void Test_Pos_PrintPDF417BarcodeUseEpsonCmd(Pointer h) {
-        try{
+        try {
             AutoReplyPrint.INSTANCE.CP_Pos_PrintPDF417BarcodeUseEpsonCmd(h, 0, 0, 3, 3, 0, 0, "test 测试");
 
             boolean result = AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 3);
@@ -845,16 +921,16 @@ public class function {
                 TestUtils.showMessageOnUiThread(activity, "Write failed");
             Log.d("try", "Test_Pos_PrintQRCodeUseEpsonCmd: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: " + e.getMessage());
         }
 
 
-
     }
+
     public void Test_Pos_PrintRasterImageFromBitmap(Pointer h) {
-        try{
+        try {
             Bitmap bitmap = TestUtils.getImageFromAssetsFile(activity, "RasterImage/yellowmen.png");
             if ((bitmap == null) || (bitmap.getWidth() == 0) || (bitmap.getHeight() == 0))
                 return;
@@ -873,39 +949,45 @@ public class function {
                 TestUtils.showMessageOnUiThread(activity, "Write failed");
             Log.d("try", "Test_Pos_PrintQRCodeUseEpsonCmd: ");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: "+e.getMessage());
+            Log.d("Catch", "Test_Pos_PrintQRCodeUseEpsonCmd: " + e.getMessage());
         }
 
 
     }
+
     public void Test_Pos_KickOutDrawer(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_KickOutDrawer(h, 0, 100, 100);
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_KickOutDrawer(h, 1, 100, 100);
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_Beep(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_Beep(h, 3, 300);
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_FeedAndHalfCutPaper(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_FeedAndHalfCutPaper(h);
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_FullCutPaper(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_FullCutPaper(h);
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_HalfCutPaper(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_HalfCutPaper(h);
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_Feed(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "12345678901234567890");
         AutoReplyPrint.INSTANCE.CP_Pos_FeedLine(h, 4);
@@ -915,11 +997,13 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintText(Pointer h) {
         boolean result = AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "12345678901234567890\r\n");
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintTextInUTF8(Pointer h) {
         WString str = new WString(
                 "1234567890\r\n" +
@@ -936,6 +1020,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintTextInGBK(Pointer h) {
         WString str = new WString("1234567890\r\nabcdefghijklmnopqrstuvwxyz\r\n你好，欢迎使用！\r\n你號，歡迎使用！\r\n");
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
@@ -944,6 +1029,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintTextInBIG5(Pointer h) {
         WString str = new WString("1234567890\r\nabcdefghijklmnopqrstuvwxyz\r\n你號，歡迎使用！\r\n");
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
@@ -952,6 +1038,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintTextInShiftJIS(Pointer h) {
         WString str = new WString(
                 "1234567890\r\n" +
@@ -963,6 +1050,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintTextInEUCKR(Pointer h) {
         WString str = new WString(
                 "1234567890\r\n" +
@@ -975,6 +1063,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintHorizontalLine(Pointer h) {
         for (int i = 0; i < 50; i += 1)
             AutoReplyPrint.INSTANCE.CP_Pos_PrintHorizontalLine(h, i, i + 100);
@@ -985,6 +1074,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintHorizontalLineSpecifyThickness(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_PrintHorizontalLineSpecifyThickness(h, 0, 200, 10);
 
@@ -992,6 +1082,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_PrintMultipleHorizontalLinesAtOneRow(Pointer h) {
         int r = 150;
         for (int y = -r; y <= r; ++y) {
@@ -1010,6 +1101,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetMovementUnit(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetMovementUnit(h, 100, 100);
         AutoReplyPrint.INSTANCE.CP_Pos_SetAsciiTextCharRightSpacing(h, 10);
@@ -1021,6 +1113,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetPrintAreaLeftMargin(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetPrintAreaLeftMargin(h, 96);
         AutoReplyPrint.INSTANCE.CP_Pos_SetPrintAreaWidth(h, 384);
@@ -1029,6 +1122,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetPrintAreaWidth(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetPrintAreaWidth(h, 384);
         AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "1234567890123456789012345678901234567890\r\n");
@@ -1036,6 +1130,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetPrintPosition(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, 0);
         AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "12345678901234567890\r\n");
@@ -1047,6 +1142,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetAlignment(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Right);
         AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "12345678901234567890\r\n");
@@ -1058,6 +1154,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetTextScale(Pointer h) {
         int nPosition = 0;
         AutoReplyPrint.INSTANCE.CP_Pos_SetHorizontalAbsolutePrintPosition(h, nPosition);
@@ -1096,6 +1193,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetAsciiTextFontType(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetAsciiTextFontType(h, 0);
         AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "FontA\r\n");
@@ -1112,6 +1210,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetTextBold(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetTextBold(h, 1);
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
@@ -1123,6 +1222,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetTextUnderline(Pointer h) {
 
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
@@ -1137,6 +1237,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetTextUpsideDown(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
@@ -1148,6 +1249,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetTextWhiteOnBlack(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
@@ -1159,6 +1261,7 @@ public class function {
         if (!result)
             TestUtils.showMessageOnUiThread(activity, "Write failed");
     }
+
     public void Test_Pos_SetTextRotate(Pointer h) {
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
         AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);

@@ -1,109 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- First Item -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="198dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="0dp">
 
-        <!-- Existing LinearLayout with TextViews -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:orientation="horizontal">
-
-            <!-- TextView for Item Name -->
-            <TextView
-                android:id="@+id/textViewItemName"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content"
-                android:text="Item Name:"
-                android:textStyle="bold" />
-
-            <!-- TextView for Item Data -->
-            <TextView
-                android:id="@+id/Display_item_Name"
-                android:layout_width="302dp"
-                android:layout_height="wrap_content"
-                android:paddingStart="20dp"
-                android:text="Cornbeef" />
-        </LinearLayout>
-        <!-- LinearLayout for Price -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="29dp"
-            android:orientation="horizontal">
-
-            <!-- TextView for Price -->
-            <TextView
-                android:id="@+id/textViewPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="20dp"
-                android:text="Price: "
-                android:textStyle="bold" />
-
-            <!-- Placeholder for Price Data -->
-            <TextView
-                android:id="@+id/Display_item_Price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:text="$100" />
-        </LinearLayout>
-        <!-- New LinearLayout for Quantity -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/Display_item_quantity"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="20dp">
+            android:text="1x"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:textSize="16sp"
+            android:paddingEnd="8dp" />
 
-            <!-- TextView for Quantity -->
-            <TextView
-                android:id="@+id/textViewQuantityLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Quantity:"
-                android:textStyle="bold" />
-
-            <!-- TextView for Quantity Data -->
-            <TextView
-                android:id="@+id/Display_item_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:text="1" />
-
-        </LinearLayout>
-        <!-- LinearLayout for Description -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/Display_item_Name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:text="Pork Casserole"
+            android:textSize="16sp" />
 
-            <!-- TextView for Description -->
-            <TextView
-                android:id="@+id/textViewDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="20dp"
-                android:text="Description:"
-                android:textStyle="bold" />
-
-            <!-- Placeholder for Description Data -->
-            <TextView
-                android:id="@+id/Display_item_Desc"
-                android:layout_width="match_parent"
-                android:layout_height="107dp"
-                android:paddingStart="20dp"
-                android:text="Corn and beef" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/Display_item_Price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$71.96"
+            android:fontFamily="@font/plusjakartasans_bold"
+            android:textSize="16sp" />
     </LinearLayout>
 
 

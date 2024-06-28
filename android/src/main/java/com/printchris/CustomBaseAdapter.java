@@ -46,7 +46,7 @@ public class CustomBaseAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.textName = view.findViewById(R.id.Display_item_Name);
             holder.textPrice = view.findViewById(R.id.Display_item_Price);
-            holder.textDesc = view.findViewById(R.id.Display_item_Desc);
+//            holder.textDesc = view.findViewById(R.id.Display_item_Desc);
             holder.textQuantity = view.findViewById(R.id.Display_item_quantity);
 
             view.setTag(holder);
@@ -57,8 +57,8 @@ public class CustomBaseAdapter extends BaseAdapter {
         item currentItem = itemList.get(position);
 
         holder.textName.setText(currentItem.getName());
-        holder.textPrice.setText(String.valueOf((double) currentItem.getPrice()));
-        holder.textDesc.setText(currentItem.getDescription());
+        holder.textPrice.setText(String.format("$%.2f", currentItem.getPrice()));
+//        holder.textDesc.setText(currentItem.getDescription());
         holder.textQuantity.setText(currentItem.getQuantity());
         return view;
     }
@@ -66,7 +66,7 @@ public class CustomBaseAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView textName;
         TextView textPrice;
-        TextView textDesc;
+        //        TextView textDesc;
         TextView textQuantity;
     }
 }
