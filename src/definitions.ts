@@ -26,7 +26,7 @@ export interface printPluginPlugin {
   Test_Pos_PrintQRCode(): Promise<{ value: string }>;
   DisplayScreen(options: {content: any}): Promise<{ value: string }>;
   Test_Custom_Ticket_Receipt(options: {content: any}): Promise<void> 
-  
+  standby(): Promise<{ value: string }>;
 }
 export interface Payload {
   payload: string;
