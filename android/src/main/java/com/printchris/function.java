@@ -95,14 +95,19 @@ public class function {
         Log.d("Test_Costom_Ticket", "Test_Costom_Ticket_Receipt: " + data);
 
         try {
+//          reset printer
+
             AutoReplyPrint.INSTANCE.CP_Pos_ResetPrinter(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetPrintSpeed(h, 50);
+
+//          print image
+
             Bitmap bitmap = TestUtils.getImageFromAssetsFile(activity, "RasterImage/bell-logo.png");
             if (bitmap == null || bitmap.getWidth() == 0 || bitmap.getHeight() == 0) {
                 return;
             }
 
-            int printwidth = 300;
+            int printwidth = 200;
             IntByReference width_mm = new IntByReference();
             IntByReference height_mm = new IntByReference();
             IntByReference dots_per_mm = new IntByReference();
@@ -116,6 +121,7 @@ public class function {
                     AutoReplyPrint.CP_ImageBinarizationMethod_ErrorDiffusion,
                     AutoReplyPrint.CP_ImageCompressionMethod_None);
 
+//          init JSON
 
             int paperWidth = 384;
             JSONObject content = data.getJSONObject("content");
@@ -144,12 +150,16 @@ public class function {
             Log.d("paymentType", "paymentType: " + paymentType);
             Log.d("barcode", "barcode: " + barcode);
 
+
+
+
+
 // Printer setup and printing
 
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteMode(h);
             AutoReplyPrint.INSTANCE.CP_Pos_SetMultiByteEncoding(h, AutoReplyPrint.CP_MultiByteEncoding_UTF8);
             AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_HCenter);
-//      AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Bell POS\r\n");
+            //      AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, "Bell POS\r\n");
             AutoReplyPrint.INSTANCE.CP_Pos_SetAlignment(h, AutoReplyPrint.CP_Pos_Alignment_Left);
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, tranID + "\r\n");
             AutoReplyPrint.INSTANCE.CP_Pos_PrintText(h, date);
@@ -345,7 +355,6 @@ public class function {
             Log.d("Catch", "Test_Pos_SampleTicket_80MM_2: " + e.getMessage());
 
         }
-
 
     }
 

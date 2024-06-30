@@ -986,7 +986,7 @@ public class printPlugin extends Plugin {
             String tranID = content.optString("tranID", "");
             String paymentType = content.optString("paymentType", "");
             String barcode = content.optString("barcode", "");
-
+            String QrCode = content.optString("paymentCode", "");
             // Logging extracted values
             Log.d("payment", "payment: " + payment);
             Log.d("change", "change: " + change);
@@ -997,7 +997,7 @@ public class printPlugin extends Plugin {
             Log.d("tranID", "tranID: " + tranID);
             Log.d("paymentType", "paymentType: " + paymentType);
             Log.d("barcode", "barcode: " + barcode);
-
+            Log.d("QrCode", "QrCode: " + QrCode);
             for (int i = 0; i < items.length(); i++) {
                 JSONObject item = items.optJSONObject(i);
                 if (item == null) {
@@ -1019,16 +1019,16 @@ public class printPlugin extends Plugin {
             }
 
             int numberOfDisplays = displays.length;
-            showToast(context, "Number of Displays Detected: " + numberOfDisplays);
+//            showToast(context, "Number of Displays Detected: " + numberOfDisplays);
 
             for (Display display : displays) {
                 int displayId = display.getDisplayId();
                 String displayName = display.getName();
                 Log.d("displayId", "DisplayScreen: " + displayId);
                 if (displayId == 0) {
-                    showToast(context, "Main Screen: " + displayName + " " + displayId);
+//                    showToast(context, "Main Screen: " + displayName + " " + displayId);
                 } else if (displayId > 0) {
-                    showToast(context, "Auxiliary Screen: " + displayName + " " + displayId);
+//                    showToast(context, "Auxiliary Screen: " + displayName + " " + displayId);
                     Log.d("displayScreen", "DisplayScreen: " + display + displayId);
                     SecondaryScreen presentation = new SecondaryScreen(context, display, data);
                     presentation.show();
@@ -1499,11 +1499,11 @@ public class printPlugin extends Plugin {
                                     String info_status_string = String.format(" Printer Info Status: 0x%04X", printer_info_status & 0xffff);
                                     if (status.INFO_LABELMODE()) {
                                         info_status_string += "[Label Mode]";
-                                        Toast.makeText(getContext(), error_status_string += "[Label Mode]", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), info_status_string += "[Label Mode]", Toast.LENGTH_SHORT).show();
                                     }
                                     if (status.INFO_LABELPAPER()) {
                                         info_status_string += "[Label Paper]";
-                                        Toast.makeText(getContext(), error_status_string += "[Label Paper]", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(getContext(), info_status_string += "[Label Paper]", Toast.LENGTH_SHORT).show();
                                     }
                                     if (status.INFO_PAPERNOFETCH()) {
                                         info_status_string += "[Paper Not Fetch]";

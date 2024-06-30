@@ -3,11 +3,17 @@ package com.printchris;
 import android.annotation.SuppressLint;
 import android.app.Presentation;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +27,8 @@ import java.util.List;
 public class SecondaryScreen extends Presentation {
 
     private JSONObject data;
-
+    public String modifiedString;
+    //  public long startTimeInMillis = 600000;
     public SecondaryScreen(Context outerContext, Display display, JSONObject data) {
         super(outerContext, display);
         this.data = data;
@@ -36,10 +43,11 @@ public class SecondaryScreen extends Presentation {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.differentdisplay_basket, null);
         setContentView(view);
-
         listView = (ListView) findViewById(R.id.CustomListView);
         TextView _payment = findViewById(R.id.payment);
-
+        ImageView _imageView = findViewById(R.id.QRCode);
+        LinearLayout _qrcodeLayout = findViewById(R.id._qrcodeLayout);
+        TextView _timerTextView = findViewById(R.id.timer);
         if (data != null && data.length() != 0) {
             Log.d("onCreate", "onCreate: " + data);
             List<item> itemList = new ArrayList<>();
@@ -52,13 +60,41 @@ public class SecondaryScreen extends Presentation {
                 double tax = content.optDouble("tax", 0.0);
                 double itemSubtotal = content.optDouble("itemSubtotal", 0.0);
                 double totalAmount = content.optDouble("totalAmount", 0.0);
-
+                int timer = content.optInt("timer", 0);
                 // Extracting string values from JSON
                 String date = content.optString("date", "N/A");
                 String tranID = content.optString("tranID", "N/A");
                 String paymentType = content.optString("paymentType", "N/A");
                 String barcode = content.optString("barcode", "N/A");
+                String paymentCode = content.optString("paymentCode", "");
+                if (paymentCode.startsWith("data:image/png;base64,")){
+                    modifiedString = paymentCode.substring("data:image/png;base64,".length());
+                    byte[] decodedString = Base64.decode(modifiedString, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    // Set the Bitmap to the ImageView
+                    _imageView.setImageBitmap(decodedByte);
+                    _qrcodeLayout.setVisibility(View.VISIBLE);
+                    // 10 minutes in milliseconds
+                    CountDownTimer countDownTimer = new CountDownTimer(timer, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            // Update the timer text view every second
+                            long minutes = (millisUntilFinished / 1000) / 60;
+                            long seconds = (millisUntilFinished / 1000) % 60;
+                            String timeLeftFormatted = String.format("%02d:%02d", minutes, seconds);
+                            _timerTextView.setText(timeLeftFormatted);
+                        }
 
+                        @Override
+                        public void onFinish() {
+                            // Timer finished
+                            _timerTextView.setText("00:00");
+                        }
+                    }.start();
+
+                }else{
+                    _qrcodeLayout.setVisibility(View.GONE);
+                }
                 // Logging extracted values
                 Log.d("payment", "payment: " + payment);
                 Log.d("change", "change: " + change);
@@ -69,7 +105,7 @@ public class SecondaryScreen extends Presentation {
                 Log.d("tranID", "tranID: " + tranID);
                 Log.d("paymentType", "paymentType: " + paymentType);
                 Log.d("barcode", "barcode: " + barcode);
-
+                Log.d("paymentCode", "paymentCode: " + paymentCode);
                 if (items != null) {
                     for (int i = 0; i < items.length(); i++) {
                         JSONObject item = items.optJSONObject(i);
@@ -98,6 +134,7 @@ public class SecondaryScreen extends Presentation {
                 // Set text values for TextViews
                 _payment.setText(String.format("$%.2f", totalAmount));
 
+
             } else {
                 // Handle case where content is null
                 Log.d("onCreate", "Content JSONObject is null.");
@@ -112,5 +149,8 @@ public class SecondaryScreen extends Presentation {
             Log.d("onCreate", "Data JSONObject is null or empty.");
             _payment.setText("$0.00");
         }
+
     }
+
 }
+

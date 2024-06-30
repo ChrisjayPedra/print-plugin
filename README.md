@@ -35,6 +35,7 @@ npx cap sync
 * [`Test_Pos_PrintQRCode()`](#test_pos_printqrcode)
 * [`DisplayScreen(...)`](#displayscreen)
 * [`Test_Custom_Ticket_Receipt(...)`](#test_custom_ticket_receipt)
+* [`standby()`](#standby)
 * [Interfaces](#interfaces)
 
 </docgen-index>
@@ -292,6 +293,17 @@ Test_Custom_Ticket_Receipt(options: { content: any; }) => Promise<void>
 | Param         | Type                           |
 | ------------- | ------------------------------ |
 | **`options`** | <code>{ content: any; }</code> |
+
+--------------------
+
+
+### standby()
+
+```typescript
+standby() => Promise<{ value: string; }>
+```
+
+**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
 
 --------------------
 

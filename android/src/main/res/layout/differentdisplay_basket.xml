@@ -64,6 +64,8 @@
         </LinearLayout>
 
         <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/_qrcodeLayout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -73,6 +75,7 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/QRCode"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
                 android:padding="30dp"
@@ -88,6 +91,18 @@
                 android:gravity="center"
                 android:textAlignment="center"
                 android:textColor="#000000"
+                android:layout_marginTop="16dp" />
+            <TextView
+                android:id="@+id/timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10:00"
+                android:fontFamily="@font/plusjakartasans_bold"
+                android:textSize="16sp"
+
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="#FF1010"
                 android:layout_marginTop="16dp" />
         </LinearLayout>
     </LinearLayout>
